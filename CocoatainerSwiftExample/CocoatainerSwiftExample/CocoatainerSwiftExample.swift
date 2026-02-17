@@ -22,34 +22,33 @@ class CocoatainerSwiftExample {
         let pmix = Mixture.Protocol.self
         let pmug = LiquidVessel.Protocol.self
 
-        container.registerComponent(type: phws, withInstance: Kettle())
-        container.registerComponent(type: ptop, withInstance: Marshmallow())
-
-        // Idea
-//        container.registerComponent(abstraction: pmix, implementation: Mixture.self, dependentOn: <#T##[any Any.Type]#>, constructWith: <#T##CCTComponentFactory#>)
-
-        let mixDeps: [Any.Type] = [ptop]
-        container.registerComponent(type: pmix, dependentOn: mixDeps, constructWith: .withArgs({depsArgs in
-            let topping = depsArgs[0] as! Topping
-            return CocoaPowder(topping: topping)
-        }))
-
-        // TODO: Generics
-//        let powder: Mixture = container.resolveG1(type: Mixture.Protocol.self) as! Mixture
-//        print(">> mixture as powder: \(powder)")
-
-        let mugDeps: [Any.Type] = [phws, pmix]
-        container.registerComponent(type: pmug, dependentOn: mugDeps, constructWith: .withArgs({depsArgs in
-            let source = depsArgs[0] as! HotWaterSource
-            let mixture = depsArgs[1] as! Mixture
-            return CocoaMug(source: source, mixture: mixture)
-        }))
-
-        container.start(autoResolve: true)
-
         do {
-            let mug: LiquidVessel =
-            try container.resolveComponent(type: pmug) as! LiquidVessel
+            try container.registerComponent(type: phws, withInstance: Kettle())
+            try container.registerComponent(type: ptop, withInstance: Marshmallow())
+
+            // TODO: Idea
+//            container.registerComponent(abstraction: pmix, implementation: Mixture.self, dependentOn: <#T##[any Any.Type]#>, constructWith: <#T##CCTComponentFactory#>)
+
+            let mixDeps: [Any.Type] = [ptop]
+            try container.registerComponent(type: pmix, dependentOn: mixDeps, constructWith: .withArgs({depsArgs in
+                let topping = depsArgs[0] as! Topping
+                return CocoaPowder(topping: topping)
+            }))
+
+            // TODO: Generics
+    //        let powder: Mixture = container.resolveG1(type: Mixture.Protocol.self) as! Mixture
+    //        print(">> mixture as powder: \(powder)")
+
+            let mugDeps: [Any.Type] = [phws, pmix]
+            try container.registerComponent(type: pmug, dependentOn: mugDeps, constructWith: .withArgs({depsArgs in
+                let source = depsArgs[0] as! HotWaterSource
+                let mixture = depsArgs[1] as! Mixture
+                return CocoaMug(source: source, mixture: mixture)
+            }))
+
+            try container.start(autoResolve: true)
+
+            let mug: LiquidVessel = try container.resolveComponent(type: pmug) as! LiquidVessel
 
             mug.drink(amount: 20)
             mug.checkAmount()

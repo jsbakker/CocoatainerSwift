@@ -28,9 +28,9 @@ public class CCTContainer {
         self.model.addParent(parent.model)
     }
 
-    public func start(autoResolve: Bool) {
+    public func start(autoResolve: Bool) throws {
         if autoResolve {
-            resolveAll()
+            try resolveAll()
         }
         self.model.traverseAndExecute { component in
             if component.instance == nil {
@@ -43,19 +43,24 @@ public class CCTContainer {
         }
     }
 
-    public func registerComponent(type: Any.Type, withInstance: Any) {
+    public func registerComponent(type: Any.Type, withInstance: Any) throws {
 
-        self.model.addComponent(type: type, instance: withInstance)
+        try self.model.addComponent(type: type, instance: withInstance)
     }
 
-    public func registerComponent(type: Any.Type, constructWith: CCTComponentFactory) {
+    public func registerComponent(type: Any.Type, constructWith: CCTComponentFactory) throws {
 
-        self.registerDependencies(dependencies: [], forType: type, constructWith: constructWith)
+        try self.registerDependencies(dependencies: [], forType: type, constructWith: constructWith)
     }
 
-    public func registerComponent(type: Any.Type, dependentOn: [Any.Type], constructWith: CCTComponentFactory) {
+    public func registerComponent(type: Any.Type, dependentOn: [Any.Type], constructWith: CCTComponentFactory) throws {
 
-        self.registerDependencies(dependencies: dependentOn, forType: type, constructWith: constructWith)
+        for dep in dependentOn {
+            if dep == type {
+                throw CCTError.unableToResolveDependency("Cannot register a dependency cycle for type: \(type)")
+            }
+        }
+        try self.registerDependencies(dependencies: dependentOn, forType: type, constructWith: constructWith)
     }
 
 //    public func resolveG1<T>(type: T) -> T {
@@ -80,30 +85,24 @@ public class CCTContainer {
             return instance
         }
 
-        // TODO: Throw
-        return nil
+        throw CCTError.unableToResolveDependency("Cannot resolve or create instance of type: \(type)")
     }
 
     private func registerDependencies(dependencies: [Any.Type],
                                       forType: Any.Type,
-                                      constructWith: CCTComponentFactory) {
+                                      constructWith: CCTComponentFactory) throws {
 
-        for dep in dependencies {
-            if dep == forType {
-                // TODO: throw
-            }
-        }
-
-        self.model.addComponent(type: forType, dependencies: dependencies, initWithDepsArray: true, constructionInfo: constructWith)
+        try self.model.addComponent(type: forType, dependencies: dependencies, initWithDepsArray: true, constructionInfo: constructWith)
     }
 
-    private func resolveAll() {
-        self.model.traverseAndExecute { component in
+    private func resolveAll() throws {
+        try self.model.traverseAndExecute { component in
             if component.instance == nil {
                 do {
                     let _ = try self.resolveComponent(type: component.typeInfo!)
                 } catch {
-                    //
+                    throw CCTError.unableToResolveDependency(
+                        "Error when traversing dependencies on type: \(component.typeInfo!.self)")
                 }
             }
         }

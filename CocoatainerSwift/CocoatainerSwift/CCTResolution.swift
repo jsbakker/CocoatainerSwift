@@ -18,7 +18,7 @@ func resolveComponent(type: Any.Type, fromRegistry: CCTRegistry) throws -> Any? 
 
     let componentKey: String = String(reflecting: type.self)
     if !fromRegistry.components.keys.contains(componentKey) {
-        throw CCTError.unableToResolveDependency("Cannot resolve unregistered component: \(type)")
+        throw CCTError.unableToResolveDependency("Cannot resolve unregistered type: \(type)")
     }
 
     let component: CCTComponent = fromRegistry.components[componentKey]!
@@ -29,10 +29,10 @@ func resolveComponent(type: Any.Type, fromRegistry: CCTRegistry) throws -> Any? 
 
     let initializer: CCTComponentFactory? = component.constructionInfo
     if initializer == nil {
-        return nil
+        throw CCTError.unableToResolveDependency("Cannot find construction info for type: \(type)")
     }
 
-    resolvedInstance = resolveDependencies(
+    resolvedInstance = try resolveDependencies(
         component: component, fromRegistry: fromRegistry, andConstruct: initializer!)
 
     component.instance = resolvedInstance
@@ -41,18 +41,18 @@ func resolveComponent(type: Any.Type, fromRegistry: CCTRegistry) throws -> Any? 
 
 func resolveDependencies(component: CCTComponent,
                          fromRegistry: CCTRegistry,
-                         andConstruct: CCTComponentFactory) -> Any? {
+                         andConstruct: CCTComponentFactory) throws -> Any? {
 
     let dependencies = component.dependencies
     if dependencies == nil || dependencies!.isEmpty {
         return andConstruct.create()
     }
-    return resolveConstructableDependencies(dependencies: dependencies!, fromRegistry: fromRegistry, andConstruct: andConstruct)
+    return try resolveConstructableDependencies(dependencies: dependencies!, fromRegistry: fromRegistry, andConstruct: andConstruct)
 }
 
 func resolveConstructableDependencies(dependencies: [Any.Type],
                                       fromRegistry: CCTRegistry,
-                                      andConstruct: CCTComponentFactory) -> Any? {
+                                      andConstruct: CCTComponentFactory) throws -> Any? {
     var depInstances: [Any] = []
     
     for dep in dependencies {
@@ -60,7 +60,7 @@ func resolveConstructableDependencies(dependencies: [Any.Type],
             let instance = try resolveComponent(type: dep, fromRegistry: fromRegistry)
             depInstances.append(instance!)
         } catch {
-            return nil
+            throw CCTError.unableToResolveDependency("Failed to resolve depenency: \(dep)")
         }
     }
 

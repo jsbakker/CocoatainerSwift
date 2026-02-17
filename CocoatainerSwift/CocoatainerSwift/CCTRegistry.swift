@@ -10,7 +10,7 @@
 
 import Foundation
 
-typealias VisitComponents = (CCTComponent) -> Void
+typealias VisitComponents = (CCTComponent) throws -> Void
 
 class CCTRegistry {
     var components: [String:CCTComponent]
@@ -42,17 +42,17 @@ class CCTRegistry {
         return nil
     }
 
-    func traverseAndExecute(visitor: VisitComponents) {
+    func traverseAndExecute(visitor: VisitComponents) rethrows {
         for key in self.components.keys {
             if let component = self.components[key] {
-                visitor(component)
+                try visitor(component)
             }
         }
     }
 
-    func addComponent(type: Any.Type, instance: Any) {
+    func addComponent(type: Any.Type, instance: Any) throws {
 
-        addComponent(
+        try addComponent(
             type: type,
             dependencies: nil,
             initWithDepsArray: false,
@@ -64,9 +64,9 @@ class CCTRegistry {
         type: Any.Type,
         dependencies: [Any.Type]?,
         initWithDepsArray: Bool,
-        constructionInfo: CCTComponentFactory?) {
+        constructionInfo: CCTComponentFactory?) throws {
 
-            addComponent(
+            try addComponent(
                 type: type,
                 dependencies: dependencies,
                 initWithDepsArray: initWithDepsArray,
@@ -79,14 +79,14 @@ class CCTRegistry {
         dependencies: [Any.Type]?,
         initWithDepsArray: Bool,
         constructionInfo: CCTComponentFactory?,
-        instance: Any?) {
+        instance: Any?) throws {
 
         let componentKey: String = String(reflecting: type.self)
         if components.keys.contains(componentKey) {
-            fatalError("Duplicate abstraction: \(type)")
+            throw CCTError.unableToResolveDependency("Duplicate abstraction: \(type)")
         }
 
-        var component: CCTComponent = CCTComponent()
+        let component = CCTComponent()
         component.typeInfo = type
         component.constructionInfo = constructionInfo
         component.instance = instance

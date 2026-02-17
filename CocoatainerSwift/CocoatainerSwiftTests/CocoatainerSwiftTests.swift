@@ -34,7 +34,7 @@ import Testing
 
     @Test func registerAbstractResolveConcreteThrows() throws {
         let config = CCTContainer()
-        config.registerComponent(
+        try config.registerComponent(
             type: IndependentA.self,
             withInstance: NoDepsA())
         #expect(throws: (any Error).self) {
@@ -44,7 +44,7 @@ import Testing
 
     @Test func registerConcreteResolveAbstractThrows() throws {
         let config = CCTContainer()
-        config.registerComponent(
+        try config.registerComponent(
             type: NoDepsA.self,
             withInstance: NoDepsA())
         #expect(throws: (any Error).self) {
@@ -52,14 +52,14 @@ import Testing
         }
     }
 
-    @Test func resolveInjectedInstanceByInterface() {
+    @Test func resolveInjectedInstanceByInterface() throws {
         let config = CCTContainer()
 
-        config.registerComponent(
-            type: IndependentA.self,
-            withInstance: NoDepsA())
-
         do {
+            try config.registerComponent(
+                type: IndependentA.self,
+                withInstance: NoDepsA())
+
             let resolved = try config.resolveComponent(type: IndependentA.self)
             #expect(resolved != nil)
             #expect(resolved is IndependentA)
@@ -69,14 +69,14 @@ import Testing
         }
     }
 
-    @Test func resolveInjectedInstance() {
+    @Test func resolveInjectedInstance() throws {
         let config = CCTContainer()
 
-        config.registerComponent(
-            type: NoDepsA.self,
-            withInstance: NoDepsA())
-
         do {
+            try config.registerComponent(
+                type: NoDepsA.self,
+                withInstance: NoDepsA())
+
             let resolved = try config.resolveComponent(type: NoDepsA.self)
             #expect(resolved != nil)
             #expect(resolved is IndependentA)
@@ -86,16 +86,16 @@ import Testing
         }
     }
 
-    @Test func resolveNoDeps() {
+    @Test func resolveNoDeps() throws {
         let config = CCTContainer()
 
-        config.registerComponent(
-            type: NoDepsA.self,
-            constructWith: .noArgs({
-                return NoDepsA()
-            }))
-
         do {
+            try config.registerComponent(
+                type: NoDepsA.self,
+                constructWith: .noArgs({
+                    return NoDepsA()
+                }))
+
             let resolved = try config.resolveComponent(type: NoDepsA.self)
             #expect(resolved != nil)
             #expect(resolved is IndependentA)
@@ -105,23 +105,23 @@ import Testing
         }
     }
 
-    @Test func resolveDependsOn1() {
+    @Test func resolveDependsOn1() throws {
         let config = CCTContainer()
 
-        config.registerComponent(
-            type: NoDepsA.self,
-            constructWith: .noArgs({
-                return NoDepsA()
+        do {
+            try config.registerComponent(
+                type: NoDepsA.self,
+                constructWith: .noArgs({
+                    return NoDepsA()
+                }))
+
+            try config.registerComponent(type: HasDeps1A.self,
+                                         dependentOn: [NoDepsA.self],
+                                         constructWith: .withArgs({ deps in
+                let dependency: NoDepsA = deps[0] as! NoDepsA
+                return HasDeps1A(dependency1: dependency)
             }))
 
-        config.registerComponent(type: HasDeps1A.self,
-                                 dependentOn: [NoDepsA.self],
-                                 constructWith: .withArgs({ deps in
-            let dependency: NoDepsA = deps[0] as! NoDepsA
-            return HasDeps1A(dependency1: dependency)
-        }))
-
-        do {
             let resolved = try config.resolveComponent(type: HasDeps1A.self)
             #expect(resolved != nil)
             #expect(resolved is Dependent1A)
@@ -134,21 +134,21 @@ import Testing
         }
     }
 
-    @Test func resolveDependsOn1InjectedInstance() {
+    @Test func resolveDependsOn1InjectedInstance() throws {
         let config = CCTContainer()
 
-        config.registerComponent(
-            type: NoDepsA.self,
-            withInstance: NoDepsA())
-
-        config.registerComponent(type: HasDeps1A.self,
-                                 dependentOn: [NoDepsA.self],
-                                 constructWith: .withArgs({ deps in
-            let dependency: NoDepsA = deps[0] as! NoDepsA
-            return HasDeps1A(dependency1: dependency)
-        }))
-
         do {
+            try config.registerComponent(
+                type: NoDepsA.self,
+                withInstance: NoDepsA())
+
+            try config.registerComponent(type: HasDeps1A.self,
+                                         dependentOn: [NoDepsA.self],
+                                         constructWith: .withArgs({ deps in
+                let dependency: NoDepsA = deps[0] as! NoDepsA
+                return HasDeps1A(dependency1: dependency)
+            }))
+
             let resolved = try config.resolveComponent(type: HasDeps1A.self)
             #expect(resolved != nil)
             #expect(resolved is Dependent1A)
@@ -161,30 +161,30 @@ import Testing
         }
     }
 
-    @Test func resolveDependsOn2() {
+    @Test func resolveDependsOn2() throws {
         let config = CCTContainer()
 
-        config.registerComponent(
-            type: NoDepsA.self,
-            constructWith: .noArgs({
-                return NoDepsA()
-            }))
-
-        config.registerComponent(
-            type: NoDepsB.self,
-            constructWith: .noArgs({
-                return NoDepsB()
-            }))
-
-        config.registerComponent(type: HasDeps2A.self,
-                                 dependentOn: [NoDepsA.self, NoDepsB.self],
-                                 constructWith: .withArgs({ deps in
-            let dependency1: NoDepsA = deps[0] as! NoDepsA
-            let dependency2: NoDepsB = deps[1] as! NoDepsB
-            return HasDeps2A(dependency1: dependency1, dependency2: dependency2)
-        }))
-
         do {
+            try config.registerComponent(
+                type: NoDepsA.self,
+                constructWith: .noArgs({
+                    return NoDepsA()
+                }))
+
+            try config.registerComponent(
+                type: NoDepsB.self,
+                constructWith: .noArgs({
+                    return NoDepsB()
+                }))
+
+            try config.registerComponent(type: HasDeps2A.self,
+                                         dependentOn: [NoDepsA.self, NoDepsB.self],
+                                         constructWith: .withArgs({ deps in
+                let dependency1: NoDepsA = deps[0] as! NoDepsA
+                let dependency2: NoDepsB = deps[1] as! NoDepsB
+                return HasDeps2A(dependency1: dependency1, dependency2: dependency2)
+            }))
+
             let resolved = try config.resolveComponent(type: HasDeps2A.self)
             #expect(resolved != nil)
             #expect(resolved is Dependent2A)
@@ -198,28 +198,28 @@ import Testing
         }
     }
 
-    @Test func resolveDependsOn2InjectedInstanceD1() {
+    @Test func resolveDependsOn2InjectedInstanceD1() throws {
         let config = CCTContainer()
 
-        config.registerComponent(
-            type: NoDepsA.self,
-            withInstance: NoDepsA())
+        do {
+            try config.registerComponent(
+                type: NoDepsA.self,
+                withInstance: NoDepsA())
 
-        config.registerComponent(
-            type: NoDepsB.self,
-            constructWith: .noArgs({
-                return NoDepsB()
+            try config.registerComponent(
+                type: NoDepsB.self,
+                constructWith: .noArgs({
+                    return NoDepsB()
+                }))
+
+            try config.registerComponent(type: HasDeps2A.self,
+                                         dependentOn: [NoDepsA.self, NoDepsB.self],
+                                         constructWith: .withArgs({ deps in
+                let dependency1: NoDepsA = deps[0] as! NoDepsA
+                let dependency2: NoDepsB = deps[1] as! NoDepsB
+                return HasDeps2A(dependency1: dependency1, dependency2: dependency2)
             }))
 
-        config.registerComponent(type: HasDeps2A.self,
-                                 dependentOn: [NoDepsA.self, NoDepsB.self],
-                                 constructWith: .withArgs({ deps in
-            let dependency1: NoDepsA = deps[0] as! NoDepsA
-            let dependency2: NoDepsB = deps[1] as! NoDepsB
-            return HasDeps2A(dependency1: dependency1, dependency2: dependency2)
-        }))
-
-        do {
             let resolved = try config.resolveComponent(type: HasDeps2A.self)
             #expect(resolved != nil)
             #expect(resolved is Dependent2A)
@@ -233,37 +233,37 @@ import Testing
         }
     }
 
-    @Test func resolveNestedDependencies() {
+    @Test func resolveNestedDependencies() throws {
         let config = CCTContainer()
 
-        config.registerComponent(
-            type: NoDepsA.self,
-            constructWith: .noArgs({
-                return NoDepsA()
-            }))
-
-        config.registerComponent(
-            type: NoDepsB.self,
-            constructWith: .noArgs({
-                return NoDepsB()
-            }))
-
-        config.registerComponent(type: HasDeps1A.self,
-                                 dependentOn: [NoDepsA.self],
-                                 constructWith: .withArgs({ deps in
-            let dependency: NoDepsA = deps[0] as! NoDepsA
-            return HasDeps1A(dependency1: dependency)
-        }))
-
-        config.registerComponent(type: HasDeps2BRecursive.self,
-                                 dependentOn: [HasDeps1A.self, NoDepsB.self],
-                                 constructWith: .withArgs({ deps in
-            let dependency1: HasDeps1A = deps[0] as! HasDeps1A
-            let dependency2: NoDepsB = deps[1] as! NoDepsB
-            return HasDeps2BRecursive(dependency1: dependency1, dependency2: dependency2)
-        }))
-
         do {
+            try config.registerComponent(
+                type: NoDepsA.self,
+                constructWith: .noArgs({
+                    return NoDepsA()
+                }))
+
+            try config.registerComponent(
+                type: NoDepsB.self,
+                constructWith: .noArgs({
+                    return NoDepsB()
+                }))
+
+            try config.registerComponent(type: HasDeps1A.self,
+                                     dependentOn: [NoDepsA.self],
+                                     constructWith: .withArgs({ deps in
+                let dependency: NoDepsA = deps[0] as! NoDepsA
+                return HasDeps1A(dependency1: dependency)
+            }))
+
+            try config.registerComponent(type: HasDeps2BRecursive.self,
+                                     dependentOn: [HasDeps1A.self, NoDepsB.self],
+                                     constructWith: .withArgs({ deps in
+                let dependency1: HasDeps1A = deps[0] as! HasDeps1A
+                let dependency2: NoDepsB = deps[1] as! NoDepsB
+                return HasDeps2BRecursive(dependency1: dependency1, dependency2: dependency2)
+            }))
+
             let resolved = try config.resolveComponent(type: HasDeps2BRecursive.self)
             #expect(resolved != nil)
             #expect(resolved is HasDeps2BRecursive)
@@ -276,33 +276,33 @@ import Testing
         }
     }
 
-    @Test func resolveNestedDependenciesPassedAsProtocol() {
+    @Test func resolveNestedDependenciesPassedAsProtocol() throws {
         let config = CCTContainer()
 
-        config.registerComponent(
-            type: NoDepsA.self,
-            withInstance: NoDepsA())
-
-        config.registerComponent(
-            type: NoDepsB.self,
-            withInstance: NoDepsB())
-
-        config.registerComponent(type: HasDeps1A.self,
-                                 dependentOn: [NoDepsA.self],
-                                 constructWith: .withArgs({ deps in
-            let dependency: IndependentA = deps[0] as! IndependentA
-            return HasDeps1A(dependency1: dependency)
-        }))
-
-        config.registerComponent(type: HasDeps2BRecursive.self,
-                                 dependentOn: [HasDeps1A.self, NoDepsB.self],
-                                 constructWith: .withArgs({ deps in
-            let dependency1: Dependent1A = deps[0] as! Dependent1A
-            let dependency2: IndependentB = deps[1] as! IndependentB
-            return HasDeps2BRecursive(dependency1: dependency1, dependency2: dependency2)
-        }))
-
         do {
+            try config.registerComponent(
+                type: NoDepsA.self,
+                withInstance: NoDepsA())
+
+            try config.registerComponent(
+                type: NoDepsB.self,
+                withInstance: NoDepsB())
+
+            try config.registerComponent(type: HasDeps1A.self,
+                                     dependentOn: [NoDepsA.self],
+                                     constructWith: .withArgs({ deps in
+                let dependency: IndependentA = deps[0] as! IndependentA
+                return HasDeps1A(dependency1: dependency)
+            }))
+
+            try config.registerComponent(type: HasDeps2BRecursive.self,
+                                     dependentOn: [HasDeps1A.self, NoDepsB.self],
+                                     constructWith: .withArgs({ deps in
+                let dependency1: Dependent1A = deps[0] as! Dependent1A
+                let dependency2: IndependentB = deps[1] as! IndependentB
+                return HasDeps2BRecursive(dependency1: dependency1, dependency2: dependency2)
+            }))
+
             let resolved = try config.resolveComponent(type: HasDeps2BRecursive.self)
             #expect(resolved != nil)
             #expect(resolved is HasDeps2BRecursive)
@@ -315,31 +315,31 @@ import Testing
         }
     }
 
-    @Test func resolveNestedSharedDependencies() {
+    @Test func resolveNestedSharedDependencies() throws {
         let config = CCTContainer()
 
-        config.registerComponent(
-            type: NoDepsA.self,
-            constructWith: .noArgs({
-                return NoDepsA()
+        do {
+            try config.registerComponent(
+                type: NoDepsA.self,
+                constructWith: .noArgs({
+                    return NoDepsA()
+                }))
+
+            try config.registerComponent(type: HasDeps1A.self,
+                                     dependentOn: [NoDepsA.self],
+                                     constructWith: .withArgs({ deps in
+                let dependency: NoDepsA = deps[0] as! NoDepsA
+                return HasDeps1A(dependency1: dependency)
             }))
 
-        config.registerComponent(type: HasDeps1A.self,
-                                 dependentOn: [NoDepsA.self],
-                                 constructWith: .withArgs({ deps in
-            let dependency: NoDepsA = deps[0] as! NoDepsA
-            return HasDeps1A(dependency1: dependency)
-        }))
+            try config.registerComponent(type: HasDeps2CShared.self,
+                                     dependentOn: [HasDeps1A.self, NoDepsA.self],
+                                     constructWith: .withArgs({ deps in
+                let dependency1: HasDeps1A = deps[0] as! HasDeps1A
+                let dependency2: NoDepsA = deps[1] as! NoDepsA
+                return HasDeps2CShared(dependency1: dependency1, dependency2: dependency2)
+            }))
 
-        config.registerComponent(type: HasDeps2CShared.self,
-                                 dependentOn: [HasDeps1A.self, NoDepsA.self],
-                                 constructWith: .withArgs({ deps in
-            let dependency1: HasDeps1A = deps[0] as! HasDeps1A
-            let dependency2: NoDepsA = deps[1] as! NoDepsA
-            return HasDeps2CShared(dependency1: dependency1, dependency2: dependency2)
-        }))
-
-        do {
             let resolved = try config.resolveComponent(type: HasDeps2CShared.self)
             #expect(resolved != nil)
             #expect(resolved is HasDeps2CShared)
@@ -352,27 +352,27 @@ import Testing
         }
     }
 
-    @Test func resolveNestedSharedDependenciesInjectInstance() {
+    @Test func resolveNestedSharedDependenciesInjectInstance() throws {
         let config = CCTContainer()
 
-        let shared: NoDepsA = NoDepsA()
-        config.registerComponent(
-            type: NoDepsA.self,
-            withInstance: shared)
-
-        config.registerComponent(
-            type: HasDeps1A.self,
-            withInstance: HasDeps1A(dependency1: shared))
-
-        config.registerComponent(type: HasDeps2CShared.self,
-                                 dependentOn: [HasDeps1A.self, NoDepsA.self],
-                                 constructWith: .withArgs({ deps in
-            let dependency1: HasDeps1A = deps[0] as! HasDeps1A
-            let dependency2: NoDepsA = deps[1] as! NoDepsA
-            return HasDeps2CShared(dependency1: dependency1, dependency2: dependency2)
-        }))
-
         do {
+            let shared: NoDepsA = NoDepsA()
+            try config.registerComponent(
+                type: NoDepsA.self,
+                withInstance: shared)
+
+            try config.registerComponent(
+                type: HasDeps1A.self,
+                withInstance: HasDeps1A(dependency1: shared))
+
+            try config.registerComponent(type: HasDeps2CShared.self,
+                                     dependentOn: [HasDeps1A.self, NoDepsA.self],
+                                     constructWith: .withArgs({ deps in
+                let dependency1: HasDeps1A = deps[0] as! HasDeps1A
+                let dependency2: NoDepsA = deps[1] as! NoDepsA
+                return HasDeps2CShared(dependency1: dependency1, dependency2: dependency2)
+            }))
+
             let resolved = try config.resolveComponent(type: HasDeps2CShared.self)
             #expect(resolved != nil)
             #expect(resolved is HasDeps2CShared)
