@@ -47,13 +47,17 @@ class CocoatainerSwiftExample {
 
         container.start(autoResolve: true)
 
-        let mug: LiquidVessel =
-            container.resolveComponent(abstraction: pmug) as! LiquidVessel
+        do {
+            let mug: LiquidVessel =
+            try container.resolveComponent(abstraction: pmug) as! LiquidVessel
 
-        mug.drink(amount: 20)
-        mug.checkAmount()
-        mug.drink(amount: 30)
-        mug.checkAmount()
+            mug.drink(amount: 20)
+            mug.checkAmount()
+            mug.drink(amount: 30)
+            mug.checkAmount()
+        } catch {
+            print("There was an error resolving the mug.")
+        }
     }
 }
 

@@ -10,9 +10,17 @@
 
 import Foundation
 
-func resolveComponent(abstraction: Any.Type, fromRegistry: CCTRegistry) -> Any? {
+enum CCTError: Error {
+    case unableToResolveDependency(String)
+}
+
+func resolveComponent(abstraction: Any.Type, fromRegistry: CCTRegistry) throws -> Any? {
 
     let componentKey: String = String(reflecting: abstraction.self)
+    if !fromRegistry.components.keys.contains(componentKey) {
+        throw CCTError.unableToResolveDependency("Cannot resolve unregistered component: \(abstraction)")
+    }
+
     let component: CCTComponent = fromRegistry.components[componentKey]!
     var resolvedInstance = component.instance
     if resolvedInstance != nil {
@@ -46,9 +54,14 @@ func resolveConstructableDependencies(dependencies: [Any.Type],
                                       fromRegistry: CCTRegistry,
                                       andConstruct: CCTComponentFactory) -> Any? {
     var depInstances: [Any] = []
+    
     for dep in dependencies {
-        let instance = resolveComponent(abstraction: dep, fromRegistry: fromRegistry)
-        depInstances.append(instance!)
+        do {
+            let instance = try resolveComponent(abstraction: dep, fromRegistry: fromRegistry)
+            depInstances.append(instance!)
+        } catch {
+            return nil
+        }
     }
 
     return andConstruct.create(with: depInstances)

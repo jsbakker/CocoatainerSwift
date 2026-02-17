@@ -65,14 +65,15 @@ public class CCTContainer {
 //        return result
 //    }
 
-    public func resolveComponent(abstraction: Any.Type) -> Any? {
-        var instance = CocoatainerSwift.resolveComponent(abstraction: abstraction, fromRegistry: model)
+    public func resolveComponent(abstraction: Any.Type) throws -> Any? {
+
+        var instance = try CocoatainerSwift.resolveComponent(abstraction: abstraction, fromRegistry: model)
         if instance != nil {
             return instance
         }
 
         if parent != nil {
-            instance = self.parent?.resolveComponent(abstraction: abstraction)
+            instance = try self.parent?.resolveComponent(abstraction: abstraction)
         }
 
         if instance != nil {
@@ -80,7 +81,6 @@ public class CCTContainer {
         }
 
         // TODO: Throw
-
         return nil
     }
 
@@ -100,7 +100,11 @@ public class CCTContainer {
     private func resolveAll() {
         self.model.traverseAndExecute { component in
             if component.instance == nil {
-                let _ = self.resolveComponent(abstraction: component.abstraction!)
+                do {
+                    let _ = try self.resolveComponent(abstraction: component.abstraction!)
+                } catch {
+                    //
+                }
             }
         }
     }
