@@ -50,10 +50,10 @@ class CCTRegistry {
         }
     }
 
-    func addComponent(abstraction: Any.Type, instance: Any) {
+    func addComponent(type: Any.Type, instance: Any) {
 
         addComponent(
-            abstraction: abstraction,
+            type: type,
             dependencies: nil,
             initWithDepsArray: false,
             constructionInfo: nil,
@@ -61,13 +61,13 @@ class CCTRegistry {
     }
 
     func addComponent(
-        abstraction: Any.Type,
+        type: Any.Type,
         dependencies: [Any.Type]?,
         initWithDepsArray: Bool,
         constructionInfo: CCTComponentFactory?) {
 
             addComponent(
-                abstraction: abstraction,
+                type: type,
                 dependencies: dependencies,
                 initWithDepsArray: initWithDepsArray,
                 constructionInfo: constructionInfo,
@@ -75,19 +75,19 @@ class CCTRegistry {
     }
 
     private func addComponent(
-        abstraction: Any.Type,
+        type: Any.Type,
         dependencies: [Any.Type]?,
         initWithDepsArray: Bool,
         constructionInfo: CCTComponentFactory?,
         instance: Any?) {
 
-        let componentKey: String = String(reflecting: abstraction.self)
+        let componentKey: String = String(reflecting: type.self)
         if components.keys.contains(componentKey) {
-            fatalError("Duplicate abstraction: \(abstraction)")
+            fatalError("Duplicate abstraction: \(type)")
         }
 
         var component: CCTComponent = CCTComponent()
-        component.abstraction = abstraction
+        component.typeInfo = type
         component.constructionInfo = constructionInfo
         component.instance = instance
         component.dependencies = dependencies

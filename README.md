@@ -17,7 +17,7 @@ TODO:Port The Cocoatainer framework code is covered by several dozen unit tests 
 
 ### CocoaMug Example ###
 
-If you wanted some hot cocoa, first you'd need [some sort of mug](https://foo) to put it in, get hot water from [somewhere](https://foo), and of course some [mixture](https://foo), which may also contain [toppings](https://foo). You might not know specifically how or where to get these things, but you know what it takes to make hot cocoa. Maybe it would play out like this.
+If you wanted some hot cocoa, first you'd need [some sort of mug](https://bitbucket.org/staeryatz/cocoatainerswift/src/main/CocoatainerSwiftExample/CocoatainerSwiftExample/SwiftCocoaMug/CocoaMug.swift) to put it in, get hot water from [somewhere](https://bitbucket.org/staeryatz/cocoatainerswift/src/main/CocoatainerSwiftExample/CocoatainerSwiftExample/SwiftCocoaMug/Kettle.swift), and of course some [mixture](https://bitbucket.org/staeryatz/cocoatainerswift/src/main/CocoatainerSwiftExample/CocoatainerSwiftExample/SwiftCocoaMug/CocoaPowder.swift), which may also contain [toppings](https://bitbucket.org/staeryatz/cocoatainerswift/src/main/CocoatainerSwiftExample/CocoatainerSwiftExample/SwiftCocoaMug/Marshmallow.swift). You might not know specifically how or where to get these things, but you know what it takes to make hot cocoa. Maybe it would play out like this.
 
 ```swift
     let container = CCTContainer()
@@ -27,35 +27,27 @@ If you wanted some hot cocoa, first you'd need [some sort of mug](https://foo) t
     let pmix = Mixture.Protocol.self
     let pmug = LiquidVessel.Protocol.self
 
-    container.registerComponent(abstraction: phws, withInstance: Kettle())
-    container.registerComponent(abstraction: ptop, withInstance: Marshmallow())
+    container.registerComponent(type: phws, withInstance: Kettle())
+    container.registerComponent(type: ptop, withInstance: Marshmallow())
 
     let mixDeps: [Any.Type] = [ptop]
-    container.registerComponent(abstraction: pmix, dependentOn: mixDeps, initsWith: .withArgs({myArgs in
-        let topping = myArgs[0] as! Topping
+    container.registerComponent(type: pmix, dependentOn: mixDeps, constructWith: .withArgs({depsArgs in
+        let topping = depsArgs[0] as! Topping
         return CocoaPowder(topping: topping)
     }))
 
     let mugDeps: [Any.Type] = [phws, pmix]
-    container.registerComponent(abstraction: pmug, dependentOn: mugDeps, initsWith: .withArgs({myArgs in
-        let source = myArgs[0] as! HotWaterSource
-        let mixture = myArgs[1] as! Mixture
+    container.registerComponent(type: pmug, dependentOn: mugDeps, constructWith: .withArgs({depsArgs in
+        let source = depsArgs[0] as! HotWaterSource
+        let mixture = depsArgs[1] as! Mixture
         return CocoaMug(source: source, mixture: mixture)
     }))
 
     container.start(autoResolve: true)
-
-    let mug: LiquidVessel =
-        container.resolveComponent(abstraction: pmug) as! LiquidVessel
-
-    mug.drink(amount: 20)
-    mug.checkAmount()
-    mug.drink(amount: 30)
-    mug.checkAmount()
 ```
 The above might happen inside of some configuration module, and the below could be happening in some client code.
 ```swift
-    let mug: LiquideVessel = config.resolveComponent(abstraction: LiquidVessel.Protocol.self) as! LiquidVessel
+    let mug: LiquideVessel = try config.resolveComponent(type: pmug) as! LiquidVessel
 
     // Pass mug to a CocoaDrinker
 

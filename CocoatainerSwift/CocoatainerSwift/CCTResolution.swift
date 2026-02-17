@@ -14,11 +14,11 @@ enum CCTError: Error {
     case unableToResolveDependency(String)
 }
 
-func resolveComponent(abstraction: Any.Type, fromRegistry: CCTRegistry) throws -> Any? {
+func resolveComponent(type: Any.Type, fromRegistry: CCTRegistry) throws -> Any? {
 
-    let componentKey: String = String(reflecting: abstraction.self)
+    let componentKey: String = String(reflecting: type.self)
     if !fromRegistry.components.keys.contains(componentKey) {
-        throw CCTError.unableToResolveDependency("Cannot resolve unregistered component: \(abstraction)")
+        throw CCTError.unableToResolveDependency("Cannot resolve unregistered component: \(type)")
     }
 
     let component: CCTComponent = fromRegistry.components[componentKey]!
@@ -57,7 +57,7 @@ func resolveConstructableDependencies(dependencies: [Any.Type],
     
     for dep in dependencies {
         do {
-            let instance = try resolveComponent(abstraction: dep, fromRegistry: fromRegistry)
+            let instance = try resolveComponent(type: dep, fromRegistry: fromRegistry)
             depInstances.append(instance!)
         } catch {
             return nil

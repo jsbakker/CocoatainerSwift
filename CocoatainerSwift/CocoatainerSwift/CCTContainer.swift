@@ -43,19 +43,19 @@ public class CCTContainer {
         }
     }
 
-    public func registerComponent(abstraction: Any.Type, withInstance: Any) {
+    public func registerComponent(type: Any.Type, withInstance: Any) {
 
-        self.model.addComponent(abstraction: abstraction, instance: withInstance)
+        self.model.addComponent(type: type, instance: withInstance)
     }
 
-    public func registerComponent(abstraction: Any.Type, initsWith: CCTComponentFactory) {
+    public func registerComponent(type: Any.Type, constructWith: CCTComponentFactory) {
 
-        self.registerDependencies(dependencies: [], forAbstraction: abstraction, withInitializer: initsWith)
+        self.registerDependencies(dependencies: [], forType: type, constructWith: constructWith)
     }
 
-    public func registerComponent(abstraction: Any.Type, dependentOn: [Any.Type], initsWith: CCTComponentFactory) {
+    public func registerComponent(type: Any.Type, dependentOn: [Any.Type], constructWith: CCTComponentFactory) {
 
-        self.registerDependencies(dependencies: dependentOn, forAbstraction: abstraction, withInitializer: initsWith)
+        self.registerDependencies(dependencies: dependentOn, forType: type, constructWith: constructWith)
     }
 
 //    public func resolveG1<T>(type: T) -> T {
@@ -65,15 +65,15 @@ public class CCTContainer {
 //        return result
 //    }
 
-    public func resolveComponent(abstraction: Any.Type) throws -> Any? {
+    public func resolveComponent(type: Any.Type) throws -> Any? {
 
-        var instance = try CocoatainerSwift.resolveComponent(abstraction: abstraction, fromRegistry: model)
+        var instance = try CocoatainerSwift.resolveComponent(type: type, fromRegistry: model)
         if instance != nil {
             return instance
         }
 
         if parent != nil {
-            instance = try self.parent?.resolveComponent(abstraction: abstraction)
+            instance = try self.parent?.resolveComponent(type: type)
         }
 
         if instance != nil {
@@ -85,23 +85,23 @@ public class CCTContainer {
     }
 
     private func registerDependencies(dependencies: [Any.Type],
-                                      forAbstraction: Any.Type,
-                                      withInitializer: CCTComponentFactory) {
+                                      forType: Any.Type,
+                                      constructWith: CCTComponentFactory) {
 
         for dep in dependencies {
-            if dep == forAbstraction {
+            if dep == forType {
                 // TODO: throw
             }
         }
 
-        self.model.addComponent(abstraction: forAbstraction, dependencies: dependencies, initWithDepsArray: true, constructionInfo: withInitializer)
+        self.model.addComponent(type: forType, dependencies: dependencies, initWithDepsArray: true, constructionInfo: constructWith)
     }
 
     private func resolveAll() {
         self.model.traverseAndExecute { component in
             if component.instance == nil {
                 do {
-                    let _ = try self.resolveComponent(abstraction: component.abstraction!)
+                    let _ = try self.resolveComponent(type: component.typeInfo!)
                 } catch {
                     //
                 }

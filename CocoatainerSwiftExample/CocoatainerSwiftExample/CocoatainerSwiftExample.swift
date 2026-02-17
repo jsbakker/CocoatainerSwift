@@ -22,15 +22,15 @@ class CocoatainerSwiftExample {
         let pmix = Mixture.Protocol.self
         let pmug = LiquidVessel.Protocol.self
 
-        container.registerComponent(abstraction: phws, withInstance: Kettle())
-        container.registerComponent(abstraction: ptop, withInstance: Marshmallow())
+        container.registerComponent(type: phws, withInstance: Kettle())
+        container.registerComponent(type: ptop, withInstance: Marshmallow())
 
         // Idea
-//        container.registerComponent(abstraction: pmix, implementation: Mixture.self, dependentOn: <#T##[any Any.Type]#>, initsWith: <#T##CCTComponentFactory#>)
+//        container.registerComponent(abstraction: pmix, implementation: Mixture.self, dependentOn: <#T##[any Any.Type]#>, constructWith: <#T##CCTComponentFactory#>)
 
         let mixDeps: [Any.Type] = [ptop]
-        container.registerComponent(abstraction: pmix, dependentOn: mixDeps, initsWith: .withArgs({myArgs in
-            let topping = myArgs[0] as! Topping
+        container.registerComponent(type: pmix, dependentOn: mixDeps, constructWith: .withArgs({depsArgs in
+            let topping = depsArgs[0] as! Topping
             return CocoaPowder(topping: topping)
         }))
 
@@ -39,9 +39,9 @@ class CocoatainerSwiftExample {
 //        print(">> mixture as powder: \(powder)")
 
         let mugDeps: [Any.Type] = [phws, pmix]
-        container.registerComponent(abstraction: pmug, dependentOn: mugDeps, initsWith: .withArgs({myArgs in
-            let source = myArgs[0] as! HotWaterSource
-            let mixture = myArgs[1] as! Mixture
+        container.registerComponent(type: pmug, dependentOn: mugDeps, constructWith: .withArgs({depsArgs in
+            let source = depsArgs[0] as! HotWaterSource
+            let mixture = depsArgs[1] as! Mixture
             return CocoaMug(source: source, mixture: mixture)
         }))
 
@@ -49,7 +49,7 @@ class CocoatainerSwiftExample {
 
         do {
             let mug: LiquidVessel =
-            try container.resolveComponent(abstraction: pmug) as! LiquidVessel
+            try container.resolveComponent(type: pmug) as! LiquidVessel
 
             mug.drink(amount: 20)
             mug.checkAmount()

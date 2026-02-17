@@ -13,7 +13,7 @@ import Foundation
 class CCTComponent {
 
     init() {
-        self.abstraction = nil
+        self.typeInfo = nil
         self.dependencies = nil
         self.initWithDepsArray = false
         self.constructionInfo = nil
@@ -21,14 +21,14 @@ class CCTComponent {
     }
 
     deinit {
-        self.abstraction = nil
+        self.typeInfo = nil
         self.dependencies = nil
         self.initWithDepsArray = false
         self.constructionInfo = nil
         self.instance = nil
     }
 
-    var abstraction: Any.Type?
+    var typeInfo: Any.Type?
     var dependencies: [Any.Type]?
     var initWithDepsArray: Bool
     var constructionInfo: CCTComponentFactory?

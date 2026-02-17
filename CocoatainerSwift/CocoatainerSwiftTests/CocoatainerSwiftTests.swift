@@ -21,34 +21,34 @@ import Testing
     @Test func resolveUnregisteredClassThrows() async throws {
         let config = CCTContainer()
         #expect(throws: (any Error).self) {
-            try config.resolveComponent(abstraction: String.self)
+            try config.resolveComponent(type: String.self)
         }
     }
 
     @Test func resolveUnregisteredProtocolThrows() async throws {
         let config = CCTContainer()
         #expect(throws: (any Error).self) {
-            try config.resolveComponent(abstraction: (any Hashable).self)
+            try config.resolveComponent(type: (any Hashable).self)
         }
     }
 
     @Test func registerAbstractResolveConcreteThrows() throws {
         let config = CCTContainer()
         config.registerComponent(
-            abstraction: IndependentA.self,
+            type: IndependentA.self,
             withInstance: NoDepsA())
         #expect(throws: (any Error).self) {
-            try config.resolveComponent(abstraction: NoDepsA.self)
+            try config.resolveComponent(type: NoDepsA.self)
         }
     }
 
     @Test func registerConcreteResolveAbstractThrows() throws {
         let config = CCTContainer()
         config.registerComponent(
-            abstraction: NoDepsA.self,
+            type: NoDepsA.self,
             withInstance: NoDepsA())
         #expect(throws: (any Error).self) {
-            try config.resolveComponent(abstraction: IndependentA.self)
+            try config.resolveComponent(type: IndependentA.self)
         }
     }
 
@@ -56,11 +56,11 @@ import Testing
         let config = CCTContainer()
 
         config.registerComponent(
-            abstraction: IndependentA.self,
+            type: IndependentA.self,
             withInstance: NoDepsA())
 
         do {
-            let resolved = try config.resolveComponent(abstraction: IndependentA.self)
+            let resolved = try config.resolveComponent(type: IndependentA.self)
             #expect(resolved != nil)
             #expect(resolved is IndependentA)
             #expect(resolved is NoDepsA)
@@ -73,11 +73,11 @@ import Testing
         let config = CCTContainer()
 
         config.registerComponent(
-            abstraction: NoDepsA.self,
+            type: NoDepsA.self,
             withInstance: NoDepsA())
 
         do {
-            let resolved = try config.resolveComponent(abstraction: NoDepsA.self)
+            let resolved = try config.resolveComponent(type: NoDepsA.self)
             #expect(resolved != nil)
             #expect(resolved is IndependentA)
             #expect(resolved is NoDepsA)
@@ -90,13 +90,13 @@ import Testing
         let config = CCTContainer()
 
         config.registerComponent(
-            abstraction: NoDepsA.self,
-            initsWith: .noArgs({
+            type: NoDepsA.self,
+            constructWith: .noArgs({
                 return NoDepsA()
             }))
 
         do {
-            let resolved = try config.resolveComponent(abstraction: NoDepsA.self)
+            let resolved = try config.resolveComponent(type: NoDepsA.self)
             #expect(resolved != nil)
             #expect(resolved is IndependentA)
             #expect(resolved is NoDepsA)
@@ -109,20 +109,20 @@ import Testing
         let config = CCTContainer()
 
         config.registerComponent(
-            abstraction: NoDepsA.self,
-            initsWith: .noArgs({
+            type: NoDepsA.self,
+            constructWith: .noArgs({
                 return NoDepsA()
             }))
 
-        config.registerComponent(abstraction: HasDeps1A.self,
+        config.registerComponent(type: HasDeps1A.self,
                                  dependentOn: [NoDepsA.self],
-                                 initsWith: .withArgs({ deps in
+                                 constructWith: .withArgs({ deps in
             let dependency: NoDepsA = deps[0] as! NoDepsA
             return HasDeps1A(dependency1: dependency)
         }))
 
         do {
-            let resolved = try config.resolveComponent(abstraction: HasDeps1A.self)
+            let resolved = try config.resolveComponent(type: HasDeps1A.self)
             #expect(resolved != nil)
             #expect(resolved is Dependent1A)
             #expect(resolved is HasDeps1A)
@@ -138,18 +138,18 @@ import Testing
         let config = CCTContainer()
 
         config.registerComponent(
-            abstraction: NoDepsA.self,
+            type: NoDepsA.self,
             withInstance: NoDepsA())
 
-        config.registerComponent(abstraction: HasDeps1A.self,
+        config.registerComponent(type: HasDeps1A.self,
                                  dependentOn: [NoDepsA.self],
-                                 initsWith: .withArgs({ deps in
+                                 constructWith: .withArgs({ deps in
             let dependency: NoDepsA = deps[0] as! NoDepsA
             return HasDeps1A(dependency1: dependency)
         }))
 
         do {
-            let resolved = try config.resolveComponent(abstraction: HasDeps1A.self)
+            let resolved = try config.resolveComponent(type: HasDeps1A.self)
             #expect(resolved != nil)
             #expect(resolved is Dependent1A)
             #expect(resolved is HasDeps1A)
@@ -165,27 +165,27 @@ import Testing
         let config = CCTContainer()
 
         config.registerComponent(
-            abstraction: NoDepsA.self,
-            initsWith: .noArgs({
+            type: NoDepsA.self,
+            constructWith: .noArgs({
                 return NoDepsA()
             }))
 
         config.registerComponent(
-            abstraction: NoDepsB.self,
-            initsWith: .noArgs({
+            type: NoDepsB.self,
+            constructWith: .noArgs({
                 return NoDepsB()
             }))
 
-        config.registerComponent(abstraction: HasDeps2A.self,
+        config.registerComponent(type: HasDeps2A.self,
                                  dependentOn: [NoDepsA.self, NoDepsB.self],
-                                 initsWith: .withArgs({ deps in
+                                 constructWith: .withArgs({ deps in
             let dependency1: NoDepsA = deps[0] as! NoDepsA
             let dependency2: NoDepsB = deps[1] as! NoDepsB
             return HasDeps2A(dependency1: dependency1, dependency2: dependency2)
         }))
 
         do {
-            let resolved = try config.resolveComponent(abstraction: HasDeps2A.self)
+            let resolved = try config.resolveComponent(type: HasDeps2A.self)
             #expect(resolved != nil)
             #expect(resolved is Dependent2A)
             #expect(resolved is HasDeps2A)
@@ -202,25 +202,25 @@ import Testing
         let config = CCTContainer()
 
         config.registerComponent(
-            abstraction: NoDepsA.self,
+            type: NoDepsA.self,
             withInstance: NoDepsA())
 
         config.registerComponent(
-            abstraction: NoDepsB.self,
-            initsWith: .noArgs({
+            type: NoDepsB.self,
+            constructWith: .noArgs({
                 return NoDepsB()
             }))
 
-        config.registerComponent(abstraction: HasDeps2A.self,
+        config.registerComponent(type: HasDeps2A.self,
                                  dependentOn: [NoDepsA.self, NoDepsB.self],
-                                 initsWith: .withArgs({ deps in
+                                 constructWith: .withArgs({ deps in
             let dependency1: NoDepsA = deps[0] as! NoDepsA
             let dependency2: NoDepsB = deps[1] as! NoDepsB
             return HasDeps2A(dependency1: dependency1, dependency2: dependency2)
         }))
 
         do {
-            let resolved = try config.resolveComponent(abstraction: HasDeps2A.self)
+            let resolved = try config.resolveComponent(type: HasDeps2A.self)
             #expect(resolved != nil)
             #expect(resolved is Dependent2A)
             #expect(resolved is HasDeps2A)
@@ -237,34 +237,34 @@ import Testing
         let config = CCTContainer()
 
         config.registerComponent(
-            abstraction: NoDepsA.self,
-            initsWith: .noArgs({
+            type: NoDepsA.self,
+            constructWith: .noArgs({
                 return NoDepsA()
             }))
 
         config.registerComponent(
-            abstraction: NoDepsB.self,
-            initsWith: .noArgs({
+            type: NoDepsB.self,
+            constructWith: .noArgs({
                 return NoDepsB()
             }))
 
-        config.registerComponent(abstraction: HasDeps1A.self,
+        config.registerComponent(type: HasDeps1A.self,
                                  dependentOn: [NoDepsA.self],
-                                 initsWith: .withArgs({ deps in
+                                 constructWith: .withArgs({ deps in
             let dependency: NoDepsA = deps[0] as! NoDepsA
             return HasDeps1A(dependency1: dependency)
         }))
 
-        config.registerComponent(abstraction: HasDeps2BRecursive.self,
+        config.registerComponent(type: HasDeps2BRecursive.self,
                                  dependentOn: [HasDeps1A.self, NoDepsB.self],
-                                 initsWith: .withArgs({ deps in
+                                 constructWith: .withArgs({ deps in
             let dependency1: HasDeps1A = deps[0] as! HasDeps1A
             let dependency2: NoDepsB = deps[1] as! NoDepsB
             return HasDeps2BRecursive(dependency1: dependency1, dependency2: dependency2)
         }))
 
         do {
-            let resolved = try config.resolveComponent(abstraction: HasDeps2BRecursive.self)
+            let resolved = try config.resolveComponent(type: HasDeps2BRecursive.self)
             #expect(resolved != nil)
             #expect(resolved is HasDeps2BRecursive)
 
@@ -280,30 +280,30 @@ import Testing
         let config = CCTContainer()
 
         config.registerComponent(
-            abstraction: NoDepsA.self,
+            type: NoDepsA.self,
             withInstance: NoDepsA())
 
         config.registerComponent(
-            abstraction: NoDepsB.self,
+            type: NoDepsB.self,
             withInstance: NoDepsB())
 
-        config.registerComponent(abstraction: HasDeps1A.self,
+        config.registerComponent(type: HasDeps1A.self,
                                  dependentOn: [NoDepsA.self],
-                                 initsWith: .withArgs({ deps in
+                                 constructWith: .withArgs({ deps in
             let dependency: IndependentA = deps[0] as! IndependentA
             return HasDeps1A(dependency1: dependency)
         }))
 
-        config.registerComponent(abstraction: HasDeps2BRecursive.self,
+        config.registerComponent(type: HasDeps2BRecursive.self,
                                  dependentOn: [HasDeps1A.self, NoDepsB.self],
-                                 initsWith: .withArgs({ deps in
+                                 constructWith: .withArgs({ deps in
             let dependency1: Dependent1A = deps[0] as! Dependent1A
             let dependency2: IndependentB = deps[1] as! IndependentB
             return HasDeps2BRecursive(dependency1: dependency1, dependency2: dependency2)
         }))
 
         do {
-            let resolved = try config.resolveComponent(abstraction: HasDeps2BRecursive.self)
+            let resolved = try config.resolveComponent(type: HasDeps2BRecursive.self)
             #expect(resolved != nil)
             #expect(resolved is HasDeps2BRecursive)
 
@@ -319,28 +319,28 @@ import Testing
         let config = CCTContainer()
 
         config.registerComponent(
-            abstraction: NoDepsA.self,
-            initsWith: .noArgs({
+            type: NoDepsA.self,
+            constructWith: .noArgs({
                 return NoDepsA()
             }))
 
-        config.registerComponent(abstraction: HasDeps1A.self,
+        config.registerComponent(type: HasDeps1A.self,
                                  dependentOn: [NoDepsA.self],
-                                 initsWith: .withArgs({ deps in
+                                 constructWith: .withArgs({ deps in
             let dependency: NoDepsA = deps[0] as! NoDepsA
             return HasDeps1A(dependency1: dependency)
         }))
 
-        config.registerComponent(abstraction: HasDeps2CShared.self,
+        config.registerComponent(type: HasDeps2CShared.self,
                                  dependentOn: [HasDeps1A.self, NoDepsA.self],
-                                 initsWith: .withArgs({ deps in
+                                 constructWith: .withArgs({ deps in
             let dependency1: HasDeps1A = deps[0] as! HasDeps1A
             let dependency2: NoDepsA = deps[1] as! NoDepsA
             return HasDeps2CShared(dependency1: dependency1, dependency2: dependency2)
         }))
 
         do {
-            let resolved = try config.resolveComponent(abstraction: HasDeps2CShared.self)
+            let resolved = try config.resolveComponent(type: HasDeps2CShared.self)
             #expect(resolved != nil)
             #expect(resolved is HasDeps2CShared)
 
@@ -357,23 +357,23 @@ import Testing
 
         let shared: NoDepsA = NoDepsA()
         config.registerComponent(
-            abstraction: NoDepsA.self,
+            type: NoDepsA.self,
             withInstance: shared)
 
         config.registerComponent(
-            abstraction: HasDeps1A.self,
+            type: HasDeps1A.self,
             withInstance: HasDeps1A(dependency1: shared))
 
-        config.registerComponent(abstraction: HasDeps2CShared.self,
+        config.registerComponent(type: HasDeps2CShared.self,
                                  dependentOn: [HasDeps1A.self, NoDepsA.self],
-                                 initsWith: .withArgs({ deps in
+                                 constructWith: .withArgs({ deps in
             let dependency1: HasDeps1A = deps[0] as! HasDeps1A
             let dependency2: NoDepsA = deps[1] as! NoDepsA
             return HasDeps2CShared(dependency1: dependency1, dependency2: dependency2)
         }))
 
         do {
-            let resolved = try config.resolveComponent(abstraction: HasDeps2CShared.self)
+            let resolved = try config.resolveComponent(type: HasDeps2CShared.self)
             #expect(resolved != nil)
             #expect(resolved is HasDeps2CShared)
 
