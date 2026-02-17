@@ -42,6 +42,25 @@ import Testing
         }
     }
 
+    @Test func registerDependencyCycleThrows() throws {
+        let config = CCTContainer()
+        #expect(throws: (any Error).self) {
+            try config.registerComponent(type: String.self, dependentOn: [String.self], constructWith: .withArgs{ _ in String() })
+        }
+    }
+
+    @Test func registerSameTypeTwiceThrows() throws {
+        let config = CCTContainer()
+        try config.registerComponent(
+            type: IndependentA.self,
+            withInstance: NoDepsA())
+        #expect(throws: (any Error).self) {
+            try config.registerComponent(
+                type: IndependentA.self,
+                withInstance: NoDepsA())
+        }
+    }
+
     @Test func registerConcreteResolveAbstractThrows() throws {
         let config = CCTContainer()
         try config.registerComponent(
