@@ -10,7 +10,7 @@
 
 import Foundation
 
-typealias VisitComponents = (CCTComponent) throws -> Void
+typealias VisitComponents = (String, CCTComponent) throws -> Void
 
 class CCTRegistry {
     var components: [String:CCTComponent]
@@ -45,7 +45,7 @@ class CCTRegistry {
     func traverseAndExecute(visitor: VisitComponents) rethrows {
         for key in self.components.keys {
             if let component = self.components[key] {
-                try visitor(component)
+                try visitor(key, component)
             }
         }
     }

@@ -32,7 +32,7 @@ public class CCTContainer {
         if autoResolve {
             try resolveAll()
         }
-        self.model.traverseAndExecute { component in
+        self.model.traverseAndExecute { key, component in
             if component.instance == nil {
                 return
             }
@@ -96,7 +96,7 @@ public class CCTContainer {
     }
 
     private func resolveAll() throws {
-        try self.model.traverseAndExecute { component in
+        try self.model.traverseAndExecute { key, component in
             if component.instance == nil {
                 do {
                     let _ = try self.resolveComponent(type: component.typeInfo!)
