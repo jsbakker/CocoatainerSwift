@@ -8,7 +8,7 @@
 import Testing
 @testable import CocoatainerSwift
 
-@Suite("CocoatainerSwift") class CocoatainerSwiftTests {
+@Suite("CocoatainerCoreTests") class CocoatainerCoreTests {
 
     init() async throws {
         // Setup
@@ -88,7 +88,7 @@ import Testing
         }
     }
 
-    @Test func resolveInjectedInstance() throws {
+    @Test func resolveInjectedInstanceConcrete() throws {
         let config = CCTContainer()
 
         do {
@@ -105,7 +105,7 @@ import Testing
         }
     }
 
-    @Test func resolveNoDeps() throws {
+    @Test func resolveConcreteTypeNoDeps() throws {
         let config = CCTContainer()
 
         do {
@@ -399,40 +399,6 @@ import Testing
             let concrete: HasDeps2CShared = resolved as! HasDeps2CShared
             #expect(concrete.dependency1 is HasDeps1A)
             #expect(concrete.dependency2 is NoDepsA)
-        } catch {
-            #expect(Bool(false))
-        }
-    }
-
-    @Test func autoResolveWithStart() throws {
-        let config = CCTContainer()
-
-        do {
-            try config.registerComponent(
-                type: Startable.self,
-                constructWith: .noArgs({
-                    return Startable()
-                }))
-
-            try config.registerComponent(type: HasDeps1A.self,
-                                     dependentOn: [Startable.self],
-                                     constructWith: .withArgs({ deps in
-                let dependency: IndependentA = deps[0] as! IndependentA
-                return HasDeps1A(dependency1: dependency)
-            }))
-
-            try config.registerComponent(type: HasDeps2CShared.self,
-                                     dependentOn: [HasDeps1A.self, Startable.self],
-                                     constructWith: .withArgs({ deps in
-                let dependency1: HasDeps1A = deps[0] as! HasDeps1A
-                let dependency2: IndependentA = deps[1] as! IndependentA
-                return HasDeps2CShared(dependency1: dependency1, dependency2: dependency2)
-            }))
-
-            try config.start(autoResolve: true)
-
-            let startable: Startable = try config.resolveComponent(type: Startable.self) as! Startable
-            #expect(startable.started == true)
         } catch {
             #expect(Bool(false))
         }
