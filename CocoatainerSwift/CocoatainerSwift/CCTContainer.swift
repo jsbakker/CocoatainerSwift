@@ -63,12 +63,13 @@ public class CCTContainer {
         try self.registerDependencies(dependencies: dependentOn, forType: type, constructWith: constructWith)
     }
 
-//    public func resolveG1<T>(type: T) -> T {
-//        guard let result = self.resolveComponent(abstraction: T.self) as? T else {
-//            fatalError("Could not resolve type: \(T.self)")
-//        }
-//        return result
-//    }
+    public func resolve<T>(_ type: T.Type) throws -> T {
+
+        guard let instance: T = try self.resolveComponent(type: type) as? T else {
+            throw CCTError.unableToResolveDependency("Could not convert the resolved type to: \(T.self)")
+        }
+        return instance
+    }
 
     public func resolveComponent(type: Any.Type) throws -> Any? {
 
