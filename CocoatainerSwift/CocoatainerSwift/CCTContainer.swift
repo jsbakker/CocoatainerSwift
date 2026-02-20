@@ -43,17 +43,17 @@ public class CCTContainer {
         }
     }
 
-    public func registerComponent(type: Any.Type, withInstance: Any) throws {
+    public func register(type: Any.Type, withInstance: Any) throws {
 
         try self.model.addComponent(type: type, instance: withInstance)
     }
 
-    public func registerComponent(type: Any.Type, constructWith: CCTComponentFactory) throws {
+    public func register(type: Any.Type, constructWith: CCTComponentFactory) throws {
 
         try self.registerDependencies(dependencies: [], forType: type, constructWith: constructWith)
     }
 
-    public func registerComponent(type: Any.Type, dependentOn: [Any.Type], constructWith: CCTComponentFactory) throws {
+    public func register(type: Any.Type, dependentOn: [Any.Type], constructWith: CCTComponentFactory) throws {
 
         for dep in dependentOn {
             if dep == type {

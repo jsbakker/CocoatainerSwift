@@ -27,15 +27,15 @@ import Testing
             let config = CCTContainer()
 
             do {
-                try config.registerComponent(
+                try config.register(
                     type: NoDepsA.self,
                     constructWith: .noArgs({
                         return NoDepsA()
                     }))
 
-                try config.registerComponent(type: HasDeps1A.self,
-                                             dependentOn: [NoDepsA.self],
-                                             constructWith: .withArgs({ deps in
+                try config.register(type: HasDeps1A.self,
+                                    dependentOn: [NoDepsA.self],
+                                    constructWith: .withArgs({ deps in
                     let dependency: NoDepsA = deps[0] as! NoDepsA
                     return HasDeps1A(dependency1: dependency)
                 }))
@@ -58,15 +58,15 @@ import Testing
             let config = CCTContainer()
 
             do {
-                try config.registerComponent(
+                try config.register(
                     type: NoDepsA.self,
                     constructWith: .noArgs({
                         return NoDepsA()
                     }))
 
-                try config.registerComponent(type: HasDeps1A.self,
-                                             dependentOn: [NoDepsA.self],
-                                             constructWith: .withArgs({ deps in
+                try config.register(type: HasDeps1A.self,
+                                    dependentOn: [NoDepsA.self],
+                                    constructWith: .withArgs({ deps in
                     let dependency: NoDepsA = deps[0] as! NoDepsA
                     return HasDeps1A(dependency1: dependency)
                 }))

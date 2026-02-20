@@ -20,8 +20,12 @@ The CocoatainerSwift framework code is covered by several dozen unit tests aroun
 If you wanted some hot cocoa, first you'd need [some sort of mug](https://bitbucket.org/staeryatz/cocoatainerswift/src/main/CocoatainerSwiftExample/CocoatainerSwiftExample/SwiftCocoaMug/CocoaMug.swift) to put it in, get hot water from [somewhere](https://bitbucket.org/staeryatz/cocoatainerswift/src/main/CocoatainerSwiftExample/CocoatainerSwiftExample/SwiftCocoaMug/Kettle.swift), and of course some [mixture](https://bitbucket.org/staeryatz/cocoatainerswift/src/main/CocoatainerSwiftExample/CocoatainerSwiftExample/SwiftCocoaMug/CocoaPowder.swift), which may also contain [toppings](https://bitbucket.org/staeryatz/cocoatainerswift/src/main/CocoatainerSwiftExample/CocoatainerSwiftExample/SwiftCocoaMug/Marshmallow.swift). You might not know specifically how or where to get these things, but you know what it takes to make hot cocoa. Maybe it would play out like this.
 
 ```swift
+    // Register abtractions (protocols) by the concrete types which implement
+    // them, so when we want an abstraction, we can ask for it without requiring
+    // knowlege of the implementer or how to construct one.
     let container = CCTContainer()
 
+    // Protocols
     let phws = HotWaterSource.self
     let ptop = Topping.self
     let pmix = Mixture.self
@@ -32,17 +36,23 @@ If you wanted some hot cocoa, first you'd need [some sort of mug](https://bitbuc
         try container.registerComponent(type: ptop, withInstance: Marshmallow())
 
         let mixDeps: [Any.Type] = [ptop]
-        try container.registerComponent(type: pmix, dependentOn: mixDeps, constructWith: .withArgs({depsArgs in
-            let topping = depsArgs[0] as! Topping
-            return CocoaPowder(topping: topping)
-        }))
+        try container.register(
+            type: pmix,
+            dependentOn: mixDeps,
+            constructWith: .withArgs({depsArgs in
+                let topping = depsArgs[0] as! Topping
+                return CocoaPowder(topping: topping)
+            }))
 
         let mugDeps: [Any.Type] = [phws, pmix]
-        try container.registerComponent(type: pmug, dependentOn: mugDeps, constructWith: .withArgs({depsArgs in
-            let source = depsArgs[0] as! HotWaterSource
-            let mixture = depsArgs[1] as! Mixture
-            return CocoaMug(source: source, mixture: mixture)
-        }))
+        try container.register(
+            type: pmug,
+            dependentOn: mugDeps,
+            constructWith: .withArgs({depsArgs in
+                let source = depsArgs[0] as! HotWaterSource
+                let mixture = depsArgs[1] as! Mixture
+                return CocoaMug(source: source, mixture: mixture)
+            }))
 
         try container.start(autoResolve: true)
     }

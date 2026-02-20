@@ -22,7 +22,7 @@ import Testing
         let config = CCTContainer()
 
         do {
-            try config.registerComponent(
+            try config.register(
                 type: CCTStartable.self,
                 constructWith: .noArgs({
                     return Startable()
@@ -40,7 +40,7 @@ import Testing
         let config = CCTContainer()
 
         do {
-            try config.registerComponent(
+            try config.register(
                 type: CCTStartable.self,
                 constructWith: .noArgs({
                     return Startable()
@@ -56,22 +56,22 @@ import Testing
         let config = CCTContainer()
 
         do {
-            try config.registerComponent(
+            try config.register(
                 type: Startable.self,
                 constructWith: .noArgs({
                     return Startable()
                 }))
 
-            try config.registerComponent(type: HasDeps1A.self,
-                                     dependentOn: [Startable.self],
-                                     constructWith: .withArgs({ deps in
+            try config.register(type: HasDeps1A.self,
+                                dependentOn: [Startable.self],
+                                constructWith: .withArgs({ deps in
                 let dependency: IndependentA = deps[0] as! IndependentA
                 return HasDeps1A(dependency1: dependency)
             }))
 
-            try config.registerComponent(type: HasDeps2CShared.self,
-                                     dependentOn: [HasDeps1A.self, Startable.self],
-                                     constructWith: .withArgs({ deps in
+            try config.register(type: HasDeps2CShared.self,
+                                dependentOn: [HasDeps1A.self, Startable.self],
+                                constructWith: .withArgs({ deps in
                 let dependency1: HasDeps1A = deps[0] as! HasDeps1A
                 let dependency2: IndependentA = deps[1] as! IndependentA
                 return HasDeps2CShared(dependency1: dependency1, dependency2: dependency2)

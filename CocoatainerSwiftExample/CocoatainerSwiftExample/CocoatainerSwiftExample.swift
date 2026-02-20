@@ -13,34 +13,44 @@ import CocoatainerSwift
 
 class CocoatainerSwiftExample {
 
+    // Register abtractions (protocols) by the concrete types which implement
+    // them, so when we want an abstraction, we can ask for it without requiring
+    // knowlege of the implementer or how to construct one.
     static func CocoatainerExample() {
 
         let container = CCTContainer()
 
+        // Protocols
         let phws = HotWaterSource.self
         let ptop = Topping.self
         let pmix = Mixture.self
         let pmug = LiquidVessel.self
 
         do {
-            try container.registerComponent(type: phws, withInstance: Kettle())
-            try container.registerComponent(type: ptop, withInstance: Marshmallow())
+            try container.register(type: phws, withInstance: Kettle())
+            try container.register(type: ptop, withInstance: Marshmallow())
 
             // TODO: Idea
-//            container.registerComponent(abstraction: pmix, implementation: Mixture.self, dependentOn: <#T##[any Any.Type]#>, constructWith: <#T##CCTComponentFactory#>)
+//            container.registerComponent(abstraction: pmix, implementation: Mixture.self)
 
             let mixDeps: [Any.Type] = [ptop]
-            try container.registerComponent(type: pmix, dependentOn: mixDeps, constructWith: .withArgs({depsArgs in
-                let topping = depsArgs[0] as! Topping
-                return CocoaPowder(topping: topping)
-            }))
+            try container.register(
+                type: pmix,
+                dependentOn: mixDeps,
+                constructWith: .withArgs({depsArgs in
+                    let topping = depsArgs[0] as! Topping
+                    return CocoaPowder(topping: topping)
+                }))
 
             let mugDeps: [Any.Type] = [phws, pmix]
-            try container.registerComponent(type: pmug, dependentOn: mugDeps, constructWith: .withArgs({depsArgs in
-                let source = depsArgs[0] as! HotWaterSource
-                let mixture = depsArgs[1] as! Mixture
-                return CocoaMug(source: source, mixture: mixture)
-            }))
+            try container.register(
+                type: pmug,
+                dependentOn: mugDeps,
+                constructWith: .withArgs({depsArgs in
+                    let source = depsArgs[0] as! HotWaterSource
+                    let mixture = depsArgs[1] as! Mixture
+                    return CocoaMug(source: source, mixture: mixture)
+                }))
 
             try container.start(autoResolve: true)
 
@@ -55,4 +65,3 @@ class CocoatainerSwiftExample {
         }
     }
 }
-
