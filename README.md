@@ -1,6 +1,6 @@
 # CocoatainerSwift #
 
-Welcome to the CocoatainerSwift project. This project is aimed at providing Swift developers with a framework for [Dependency Injection](http://en.wikipedia.org/wiki/Dependency_injection) / [Inversion of Control](http://en.wikipedia.org/wiki/Inversion_of_control). This is a port of the Objective-C [Cocotainer](https://bitbucket.org/staeryatz/cocoatainer) project.
+Welcome to the CocoatainerSwift project. This project is aimed at providing Swift developers with a framework for [Dependency Injection](http://en.wikipedia.org/wiki/Dependency_injection) / [Inversion of Control](http://en.wikipedia.org/wiki/Inversion_of_control). This is a port of the Objective-C [Cocoatainer](https://bitbucket.org/staeryatz/cocoatainer) project.
  
 CocoatainerSwift provides an IoC container using constructor injection (as opposed to property injection) and does not require your classes to be written in a specific way for its dependencies to be injected. CocoataineSwift supports registering components either by abstract (protocol) or by concrete type (class). The container supports the following features:
 
@@ -10,10 +10,10 @@ CocoatainerSwift provides an IoC container using constructor injection (as oppos
 * Nesting of dependencies, auto-resolving when needed
 * Nesting of containers (with auto-resolving dependencies from parent)
 * Startable (with option of auto-resolution of objects not referenced outside the container, i.e. object lives solely in the container)
-* TODO:Port Error checking on registration (throws), to help prevent logical errors after resolution
+* Port Error checking on registration (throws), to help prevent logical errors after resolution
 * TODO:Port API docs via XCode Quick Help tab
 
-TODO:Port The Cocoatainer framework code is covered by several dozen unit tests around the above scenarios. The workspace also contains examples projects for using it from Swift.
+The CocoatainerSwift framework code is covered by several dozen unit tests around the above scenarios. The workspace also contains examples projects for using it from Swift.
 
 ### CocoaMug Example ###
 
@@ -22,35 +22,39 @@ If you wanted some hot cocoa, first you'd need [some sort of mug](https://bitbuc
 ```swift
     let container = CCTContainer()
 
-    let phws = HotWaterSource.Protocol.self
-    let ptop = Topping.Protocol.self
-    let pmix = Mixture.Protocol.self
-    let pmug = LiquidVessel.Protocol.self
+    let phws = HotWaterSource.self
+    let ptop = Topping.self
+    let pmix = Mixture.self
+    let pmug = LiquidVessel.self
 
-    container.registerComponent(type: phws, withInstance: Kettle())
-    container.registerComponent(type: ptop, withInstance: Marshmallow())
+    do {
+        try container.registerComponent(type: phws, withInstance: Kettle())
+        try container.registerComponent(type: ptop, withInstance: Marshmallow())
 
-    let mixDeps: [Any.Type] = [ptop]
-    container.registerComponent(type: pmix, dependentOn: mixDeps, constructWith: .withArgs({depsArgs in
-        let topping = depsArgs[0] as! Topping
-        return CocoaPowder(topping: topping)
-    }))
+        let mixDeps: [Any.Type] = [ptop]
+        try container.registerComponent(type: pmix, dependentOn: mixDeps, constructWith: .withArgs({depsArgs in
+            let topping = depsArgs[0] as! Topping
+            return CocoaPowder(topping: topping)
+        }))
 
-    let mugDeps: [Any.Type] = [phws, pmix]
-    container.registerComponent(type: pmug, dependentOn: mugDeps, constructWith: .withArgs({depsArgs in
-        let source = depsArgs[0] as! HotWaterSource
-        let mixture = depsArgs[1] as! Mixture
-        return CocoaMug(source: source, mixture: mixture)
-    }))
+        let mugDeps: [Any.Type] = [phws, pmix]
+        try container.registerComponent(type: pmug, dependentOn: mugDeps, constructWith: .withArgs({depsArgs in
+            let source = depsArgs[0] as! HotWaterSource
+            let mixture = depsArgs[1] as! Mixture
+            return CocoaMug(source: source, mixture: mixture)
+        }))
 
-    container.start(autoResolve: true)
+        try container.start(autoResolve: true)
+    }
 ```
+
 The above might happen inside of some configuration module, and the below could be happening in some client code.
 ```swift
-    let mug: LiquideVessel = try config.resolveComponent(type: pmug) as! LiquidVessel
+    do {
+        let mug = try container.resolve(pmug)
 
-    // Pass mug to a CocoaDrinker
-
+        // Pass mug to a CocoaDrinker
+    }
 ...
 
     // Later on inside of CocoaDrinker
@@ -59,6 +63,7 @@ The above might happen inside of some configuration module, and the below could 
     mug.drink(amount: 30)
     mug.checkAmount()
 ```
+
 When the above code is run, its output is like so
 ```
 Boiling water to 100 degrees C.

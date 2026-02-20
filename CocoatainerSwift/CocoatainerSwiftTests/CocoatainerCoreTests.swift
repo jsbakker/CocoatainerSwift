@@ -21,14 +21,14 @@ import Testing
     @Test func resolveUnregisteredClassThrows() async throws {
         let config = CCTContainer()
         #expect(throws: (any Error).self) {
-            try config.resolveComponent(type: String.self)
+            try config.resolve(String.self)
         }
     }
 
     @Test func resolveUnregisteredProtocolThrows() async throws {
         let config = CCTContainer()
         #expect(throws: (any Error).self) {
-            try config.resolveComponent(type: (any Hashable).self)
+            try config.resolve((any Hashable).self)
         }
     }
 
@@ -38,7 +38,7 @@ import Testing
             type: IndependentA.self,
             withInstance: NoDepsA())
         #expect(throws: (any Error).self) {
-            try config.resolveComponent(type: NoDepsA.self)
+            try config.resolve(NoDepsA.self)
         }
     }
 
@@ -67,7 +67,7 @@ import Testing
             type: NoDepsA.self,
             withInstance: NoDepsA())
         #expect(throws: (any Error).self) {
-            try config.resolveComponent(type: IndependentA.self)
+            try config.resolve(IndependentA.self)
         }
     }
 
@@ -79,9 +79,7 @@ import Testing
                 type: IndependentA.self,
                 withInstance: NoDepsA())
 
-            let resolved = try config.resolveComponent(type: IndependentA.self)
-            #expect(resolved != nil)
-            #expect(resolved is IndependentA)
+            let resolved = try config.resolve(IndependentA.self)
             #expect(resolved is NoDepsA)
         } catch {
             #expect(Bool(false))
@@ -96,10 +94,7 @@ import Testing
                 type: NoDepsA.self,
                 withInstance: NoDepsA())
 
-            let resolved = try config.resolveComponent(type: NoDepsA.self)
-            #expect(resolved != nil)
-            #expect(resolved is IndependentA)
-            #expect(resolved is NoDepsA)
+            _ = try config.resolve(NoDepsA.self)
         } catch {
             #expect(Bool(false))
         }
@@ -115,10 +110,7 @@ import Testing
                     return NoDepsA()
                 }))
 
-            let resolved = try config.resolveComponent(type: NoDepsA.self)
-            #expect(resolved != nil)
-            #expect(resolved is IndependentA)
-            #expect(resolved is NoDepsA)
+            _ = try config.resolve(NoDepsA.self)
         } catch {
             #expect(Bool(false))
         }
@@ -141,13 +133,8 @@ import Testing
                 return HasDeps1A(dependency1: dependency)
             }))
 
-            let resolved = try config.resolveComponent(type: HasDeps1A.self)
-            #expect(resolved != nil)
-            #expect(resolved is Dependent1A)
-            #expect(resolved is HasDeps1A)
-
-            let concrete: HasDeps1A = resolved as! HasDeps1A
-            #expect(concrete.dependency1 is NoDepsA)
+            let resolved = try config.resolve(HasDeps1A.self)
+            #expect(resolved.dependency1 is NoDepsA)
         } catch {
             #expect(Bool(false))
         }
@@ -168,13 +155,8 @@ import Testing
                 return HasDeps1A(dependency1: dependency)
             }))
 
-            let resolved = try config.resolveComponent(type: HasDeps1A.self)
-            #expect(resolved != nil)
-            #expect(resolved is Dependent1A)
-            #expect(resolved is HasDeps1A)
-
-            let concrete: HasDeps1A = resolved as! HasDeps1A
-            #expect(concrete.dependency1 is NoDepsA)
+            let resolved = try config.resolve(HasDeps1A.self)
+            #expect(resolved.dependency1 is NoDepsA)
         } catch {
             #expect(Bool(false))
         }
@@ -204,14 +186,9 @@ import Testing
                 return HasDeps2A(dependency1: dependency1, dependency2: dependency2)
             }))
 
-            let resolved = try config.resolveComponent(type: HasDeps2A.self)
-            #expect(resolved != nil)
-            #expect(resolved is Dependent2A)
-            #expect(resolved is HasDeps2A)
-
-            let concrete: HasDeps2A = resolved as! HasDeps2A
-            #expect(concrete.dependency1 is NoDepsA)
-            #expect(concrete.dependency2 is NoDepsB)
+            let resolved = try config.resolve(HasDeps2A.self)
+            #expect(resolved.dependency1 is NoDepsA)
+            #expect(resolved.dependency2 is NoDepsB)
         } catch {
             #expect(Bool(false))
         }
@@ -239,14 +216,9 @@ import Testing
                 return HasDeps2A(dependency1: dependency1, dependency2: dependency2)
             }))
 
-            let resolved = try config.resolveComponent(type: HasDeps2A.self)
-            #expect(resolved != nil)
-            #expect(resolved is Dependent2A)
-            #expect(resolved is HasDeps2A)
-
-            let concrete: HasDeps2A = resolved as! HasDeps2A
-            #expect(concrete.dependency1 is NoDepsA)
-            #expect(concrete.dependency2 is NoDepsB)
+            let resolved = try config.resolve(HasDeps2A.self)
+            #expect(resolved.dependency1 is NoDepsA)
+            #expect(resolved.dependency2 is NoDepsB)
         } catch {
             #expect(Bool(false))
         }
@@ -283,13 +255,9 @@ import Testing
                 return HasDeps2BRecursive(dependency1: dependency1, dependency2: dependency2)
             }))
 
-            let resolved = try config.resolveComponent(type: HasDeps2BRecursive.self)
-            #expect(resolved != nil)
-            #expect(resolved is HasDeps2BRecursive)
-
-            let concrete: HasDeps2BRecursive = resolved as! HasDeps2BRecursive
-            #expect(concrete.dependency1 is HasDeps1A)
-            #expect(concrete.dependency2 is NoDepsB)
+            let resolved = try config.resolve(HasDeps2BRecursive.self)
+            #expect(resolved.dependency1 is HasDeps1A)
+            #expect(resolved.dependency2 is NoDepsB)
         } catch {
             #expect(Bool(false))
         }
@@ -322,13 +290,9 @@ import Testing
                 return HasDeps2BRecursive(dependency1: dependency1, dependency2: dependency2)
             }))
 
-            let resolved = try config.resolveComponent(type: HasDeps2BRecursive.self)
-            #expect(resolved != nil)
-            #expect(resolved is HasDeps2BRecursive)
-
-            let concrete: HasDeps2BRecursive = resolved as! HasDeps2BRecursive
-            #expect(concrete.dependency1 is HasDeps1A)
-            #expect(concrete.dependency2 is NoDepsB)
+            let resolved = try config.resolve(HasDeps2BRecursive.self)
+            #expect(resolved.dependency1 is HasDeps1A)
+            #expect(resolved.dependency2 is NoDepsB)
         } catch {
             #expect(Bool(false))
         }
@@ -359,13 +323,9 @@ import Testing
                 return HasDeps2CShared(dependency1: dependency1, dependency2: dependency2)
             }))
 
-            let resolved = try config.resolveComponent(type: HasDeps2CShared.self)
-            #expect(resolved != nil)
-            #expect(resolved is HasDeps2CShared)
-
-            let concrete: HasDeps2CShared = resolved as! HasDeps2CShared
-            #expect(concrete.dependency1 is HasDeps1A)
-            #expect(concrete.dependency2 is NoDepsA)
+            let resolved = try config.resolve(HasDeps2CShared.self)
+            #expect(resolved.dependency1 is HasDeps1A)
+            #expect(resolved.dependency2 is NoDepsA)
         } catch {
             #expect(Bool(false))
         }
@@ -392,13 +352,9 @@ import Testing
                 return HasDeps2CShared(dependency1: dependency1, dependency2: dependency2)
             }))
 
-            let resolved = try config.resolveComponent(type: HasDeps2CShared.self)
-            #expect(resolved != nil)
-            #expect(resolved is HasDeps2CShared)
-
-            let concrete: HasDeps2CShared = resolved as! HasDeps2CShared
-            #expect(concrete.dependency1 is HasDeps1A)
-            #expect(concrete.dependency2 is NoDepsA)
+            let resolved = try config.resolve(HasDeps2CShared.self)
+            #expect(resolved.dependency1 is HasDeps1A)
+            #expect(resolved.dependency2 is NoDepsA)
         } catch {
             #expect(Bool(false))
         }

@@ -71,7 +71,7 @@ public class CCTContainer {
         return instance
     }
 
-    public func resolveComponent(type: Any.Type) throws -> Any? {
+    private func resolveComponent(type: Any.Type) throws -> Any? {
 
         var instance = try CocoatainerSwift.resolveComponent(type: type, fromRegistry: model)
         if instance != nil {

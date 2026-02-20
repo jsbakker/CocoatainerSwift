@@ -31,7 +31,7 @@ import Testing
             // Start before resolving
             try config.start(autoResolve: false)
 
-            let startable = try config.resolveComponent(type: CCTStartable.self) as! Startable
+            let startable = try config.resolve(CCTStartable.self) as! Startable
             #expect(!startable.started)
         }
     }
@@ -46,7 +46,7 @@ import Testing
                     return Startable()
                 }))
 
-            let startable = try config.resolveComponent(type: CCTStartable.self) as! Startable
+            let startable = try config.resolve(CCTStartable.self) as! Startable
             try config.start(autoResolve: false)
             #expect(startable.started)
         }
@@ -79,7 +79,7 @@ import Testing
 
             try config.start(autoResolve: true)
 
-            let startable: Startable = try config.resolveComponent(type: Startable.self) as! Startable
+            let startable: Startable = try config.resolve(Startable.self)
             #expect(startable.started == true)
         } catch {
             #expect(Bool(false))

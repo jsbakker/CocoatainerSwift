@@ -17,10 +17,10 @@ class CocoatainerSwiftExample {
 
         let container = CCTContainer()
 
-        let phws = HotWaterSource.Protocol.self
-        let ptop = Topping.Protocol.self
-        let pmix = Mixture.Protocol.self
-        let pmug = LiquidVessel.Protocol.self
+        let phws = HotWaterSource.self
+        let ptop = Topping.self
+        let pmix = Mixture.self
+        let pmug = LiquidVessel.self
 
         do {
             try container.registerComponent(type: phws, withInstance: Kettle())
@@ -35,10 +35,6 @@ class CocoatainerSwiftExample {
                 return CocoaPowder(topping: topping)
             }))
 
-            // TODO: Generics
-    //        let powder: Mixture = container.resolveG1(type: Mixture.Protocol.self) as! Mixture
-    //        print(">> mixture as powder: \(powder)")
-
             let mugDeps: [Any.Type] = [phws, pmix]
             try container.registerComponent(type: pmug, dependentOn: mugDeps, constructWith: .withArgs({depsArgs in
                 let source = depsArgs[0] as! HotWaterSource
@@ -48,7 +44,7 @@ class CocoatainerSwiftExample {
 
             try container.start(autoResolve: true)
 
-            let mug: LiquidVessel = try container.resolveComponent(type: pmug) as! LiquidVessel
+            let mug = try container.resolve(pmug)
 
             mug.drink(amount: 20)
             mug.checkAmount()
