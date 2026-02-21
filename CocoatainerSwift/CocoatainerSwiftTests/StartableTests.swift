@@ -4,6 +4,9 @@
 //
 //  Created by Jeffrey Bakker on 2026-02-19.
 //
+//  Distributed under the MIT License.
+//  See accompanying file LICENSE.md or copy at
+//  http://opensource.org/licenses/MIT
 
 import Testing
 @testable import CocoatainerSwift
@@ -33,6 +36,8 @@ import Testing
 
             let startable = try config.resolve(CCTStartable.self) as! Startable
             #expect(!startable.started)
+        } catch {
+            Issue.record(error)
         }
     }
 
@@ -49,6 +54,8 @@ import Testing
             let startable = try config.resolve(CCTStartable.self) as! Startable
             try config.start(autoResolve: false)
             #expect(startable.started)
+        } catch {
+            Issue.record(error)
         }
     }
 
@@ -82,7 +89,7 @@ import Testing
             let startable: Startable = try config.resolve(Startable.self)
             #expect(startable.started == true)
         } catch {
-            #expect(Bool(false))
+            Issue.record(error)
         }
     }
 }

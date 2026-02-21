@@ -4,6 +4,10 @@
 //
 //  Created by Jeffrey Bakker on 2026-02-14.
 //
+//
+//  Distributed under the MIT License.
+//  See accompanying file LICENSE.md or copy at
+//  http://opensource.org/licenses/MIT
 
 import Testing
 @testable import CocoatainerSwift
@@ -20,14 +24,14 @@ import Testing
 
     @Test func resolveUnregisteredClassThrows() async throws {
         let config = CCTContainer()
-        #expect(throws: (any Error).self) {
+        #expect(throws: CCTError.self) {
             try config.resolve(String.self)
         }
     }
 
     @Test func resolveUnregisteredProtocolThrows() async throws {
         let config = CCTContainer()
-        #expect(throws: (any Error).self) {
+        #expect(throws: CCTError.self) {
             try config.resolve((any Hashable).self)
         }
     }
@@ -35,14 +39,14 @@ import Testing
     @Test func registerAbstractResolveConcreteThrows() throws {
         let config = CCTContainer()
         try config.register(type: IndependentA.self, withInstance: NoDepsA())
-        #expect(throws: (any Error).self) {
+        #expect(throws: CCTError.self) {
             try config.resolve(NoDepsA.self)
         }
     }
 
     @Test func registerDependencyCycleThrows() throws {
         let config = CCTContainer()
-        #expect(throws: (any Error).self) {
+        #expect(throws: CCTError.self) {
             try config.register(type: String.self, dependentOn: [String.self], constructWith: .withArgs{ _ in String() })
         }
     }
@@ -50,7 +54,7 @@ import Testing
     @Test func registerSameTypeTwiceThrows() throws {
         let config = CCTContainer()
         try config.register(type: IndependentA.self, withInstance: NoDepsA())
-        #expect(throws: (any Error).self) {
+        #expect(throws: CCTError.self) {
             try config.register(
                 type: IndependentA.self,
                 withInstance: NoDepsA())
@@ -60,7 +64,7 @@ import Testing
     @Test func registerConcreteResolveAbstractThrows() throws {
         let config = CCTContainer()
         try config.register(type: NoDepsA.self, withInstance: NoDepsA())
-        #expect(throws: (any Error).self) {
+        #expect(throws: CCTError.self) {
             try config.resolve(IndependentA.self)
         }
     }
@@ -74,7 +78,7 @@ import Testing
             let resolved = try config.resolve(IndependentA.self)
             #expect(resolved is NoDepsA)
         } catch {
-            #expect(Bool(false))
+            Issue.record(error)
         }
     }
 
@@ -86,7 +90,7 @@ import Testing
 
             _ = try config.resolve(NoDepsA.self)
         } catch {
-            #expect(Bool(false))
+            Issue.record(error)
         }
     }
 
@@ -102,7 +106,7 @@ import Testing
 
             _ = try config.resolve(NoDepsA.self)
         } catch {
-            #expect(Bool(false))
+            Issue.record(error)
         }
     }
 
@@ -126,7 +130,7 @@ import Testing
             let resolved = try config.resolve(HasDeps1A.self)
             #expect(resolved.dependency1 is NoDepsA)
         } catch {
-            #expect(Bool(false))
+            Issue.record(error)
         }
     }
 
@@ -146,7 +150,7 @@ import Testing
             let resolved = try config.resolve(HasDeps1A.self)
             #expect(resolved.dependency1 is NoDepsA)
         } catch {
-            #expect(Bool(false))
+            Issue.record(error)
         }
     }
 
@@ -178,7 +182,7 @@ import Testing
             #expect(resolved.dependency1 is NoDepsA)
             #expect(resolved.dependency2 is NoDepsB)
         } catch {
-            #expect(Bool(false))
+            Issue.record(error)
         }
     }
 
@@ -206,7 +210,7 @@ import Testing
             #expect(resolved.dependency1 is NoDepsA)
             #expect(resolved.dependency2 is NoDepsB)
         } catch {
-            #expect(Bool(false))
+            Issue.record(error)
         }
     }
 
@@ -245,7 +249,7 @@ import Testing
             #expect(resolved.dependency1 is HasDeps1A)
             #expect(resolved.dependency2 is NoDepsB)
         } catch {
-            #expect(Bool(false))
+            Issue.record(error)
         }
     }
 
@@ -276,7 +280,7 @@ import Testing
             #expect(resolved.dependency1 is HasDeps1A)
             #expect(resolved.dependency2 is NoDepsB)
         } catch {
-            #expect(Bool(false))
+            Issue.record(error)
         }
     }
 
@@ -309,7 +313,7 @@ import Testing
             #expect(resolved.dependency1 is HasDeps1A)
             #expect(resolved.dependency2 is NoDepsA)
         } catch {
-            #expect(Bool(false))
+            Issue.record(error)
         }
     }
 
@@ -336,7 +340,7 @@ import Testing
             #expect(resolved.dependency1 is HasDeps1A)
             #expect(resolved.dependency2 is NoDepsA)
         } catch {
-            #expect(Bool(false))
+            Issue.record(error)
         }
     }
 }

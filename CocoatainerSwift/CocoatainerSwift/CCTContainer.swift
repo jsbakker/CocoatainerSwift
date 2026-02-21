@@ -16,7 +16,9 @@ public class CCTContainer {
 
     public init(parent: CCTContainer? = nil) {
         self.model = CCTRegistry()
-        self.parent = parent
+        if parent != nil {
+            self.addParent(parent!)
+        }
     }
 
     deinit {
@@ -73,19 +75,19 @@ public class CCTContainer {
 
     private func resolveComponent(type: Any.Type) throws -> Any? {
 
-        var instance = try CocoatainerSwift.resolveComponent(type: type, fromRegistry: model)
-        if instance != nil {
-            return instance
+        do {
+            let instance = try CocoatainerSwift.resolveComponent(type: type, fromRegistry: self.model)
+            if instance != nil {
+                return instance
+            }
+        } catch {
+            if self.parent != nil {
+                let instance = try self.parent?.resolveComponent(type: type)
+                if instance != nil {
+                    return instance
+                }
+            }
         }
-
-        if parent != nil {
-            instance = try self.parent?.resolveComponent(type: type)
-        }
-
-        if instance != nil {
-            return instance
-        }
-
         throw CCTError.unableToResolveDependency("Cannot resolve or create instance of type: \(type)")
     }
 

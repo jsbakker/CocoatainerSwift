@@ -17,26 +17,23 @@ enum CCTError: Error {
 func resolveComponent(type: Any.Type, fromRegistry: CCTRegistry) throws -> Any? {
 
     let componentKey: String = String(reflecting: type.self)
-    if !fromRegistry.components.keys.contains(componentKey) {
-        throw CCTError.unableToResolveDependency("Cannot resolve unregistered type: \(type)")
+    let component = fromRegistry.getComponentRegistry(key: componentKey)
+
+    let cachedInstance = component?.instance
+    if cachedInstance != nil {
+        return cachedInstance!
     }
 
-    let component: CCTComponent = fromRegistry.components[componentKey]!
-    var resolvedInstance = component.instance
-    if resolvedInstance != nil {
-        return resolvedInstance!
-    }
-
-    let initializer: CCTComponentFactory? = component.constructionInfo
+    let initializer: CCTComponentFactory? = component?.constructionInfo
     if initializer == nil {
         throw CCTError.unableToResolveDependency("Cannot find construction info for type: \(type)")
     }
 
-    resolvedInstance = try resolveDependencies(
-        component: component, fromRegistry: fromRegistry, andConstruct: initializer!)
+    let constructedInstance = try resolveDependencies(
+        component: component!, fromRegistry: fromRegistry, andConstruct: initializer!)
 
-    component.instance = resolvedInstance
-    return resolvedInstance
+    component?.instance = constructedInstance
+    return constructedInstance
 }
 
 func resolveDependencies(component: CCTComponent,
@@ -56,12 +53,8 @@ func resolveConstructableDependencies(dependencies: [Any.Type],
     var depInstances: [Any] = []
     
     for dep in dependencies {
-        do {
-            let instance = try resolveComponent(type: dep, fromRegistry: fromRegistry)
-            depInstances.append(instance!)
-        } catch {
-            throw CCTError.unableToResolveDependency("Failed to resolve depenency: \(dep)")
-        }
+        let instance = try resolveComponent(type: dep, fromRegistry: fromRegistry)
+        depInstances.append(instance!)
     }
 
     return andConstruct.create(with: depInstances)
