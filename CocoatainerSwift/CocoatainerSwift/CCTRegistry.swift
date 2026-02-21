@@ -43,7 +43,7 @@ class CCTRegistry {
     }
 
     func traverseAndExecute(visitor: VisitComponents) rethrows {
-        for key in self.components.keys {
+        for key in self.components.keys.sorted() {
             if let component = self.components[key] {
                 try visitor(key, component)
             }
