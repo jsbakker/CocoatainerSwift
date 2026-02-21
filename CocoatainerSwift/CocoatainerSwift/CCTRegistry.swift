@@ -26,7 +26,7 @@ class CCTRegistry {
         self.parent = nil
     }
 
-    func addParent(_ parent: CCTRegistry) {
+    func setParent(_ parent: CCTRegistry) {
         self.parent = parent
     }
 

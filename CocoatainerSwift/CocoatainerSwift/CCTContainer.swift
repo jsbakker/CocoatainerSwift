@@ -17,7 +17,7 @@ public class CCTContainer {
     public init(parent: CCTContainer? = nil) {
         self.model = CCTRegistry()
         if parent != nil {
-            self.addParent(parent!)
+            self.setParent(parent!)
         }
     }
 
@@ -25,9 +25,9 @@ public class CCTContainer {
         self.parent = nil
     }
 
-    public func addParent(_ parent: CCTContainer) {
+    public func setParent(_ parent: CCTContainer) {
         self.parent = parent
-        self.model.addParent(parent.model)
+        self.model.setParent(parent.model)
     }
 
     public func start(autoResolve: Bool) throws {

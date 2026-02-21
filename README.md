@@ -10,7 +10,7 @@ CocoatainerSwift provides an IoC container using constructor injection (as oppos
 * Nesting of dependencies, auto-resolving when needed
 * Nesting of containers (with auto-resolving dependencies from parent)
 * Startable (with option of auto-resolution of objects not referenced outside the container, i.e. object lives solely in the container)
-* Port Error checking on registration (throws), to help prevent logical errors after resolution
+* Error checking on registration (throws), to help prevent logical errors after resolution
 * TODO:Port API docs via XCode Quick Help tab
 
 The CocoatainerSwift framework code is covered by several dozen unit tests around the above scenarios. The workspace also contains examples projects for using it from Swift.
@@ -104,7 +104,7 @@ Before using Cocoatainer in your own project, you may want to familiarize yourse
 * Download the repo
 * In the root folder, open the CocoatainerSwift.xcworkspace file in XCode.
 * Under the CocoatainerExample project, the example code is called in the main.m file. Running it will print to the Console. Look at the CocoaMug example for practical uses of the container.
-* TODO:Port Under the CocoatainerSwift project, in the CocoatainerTests folder there are several files, each containing several unit tests on the container. Many of the types are only setup for the purpose of testing the container, and may not be setup with the best practices in mind.
+* Under the CocoatainerSwift project, in the CocoatainerSwiftTests folder there are several files, each containing several unit tests on the container. Many of the types are only setup for the purpose of testing the container, and may not be setup with the best practices in mind.
 
 ### License ###
 
