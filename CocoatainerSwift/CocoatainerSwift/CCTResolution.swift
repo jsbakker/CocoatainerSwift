@@ -10,7 +10,8 @@
 
 import Foundation
 
-enum CCTError: Error {
+/// When there is a problem while resolving a dependency from the container.
+public enum CCTError: Error {
     case unableToResolveDependency(String)
 }
 

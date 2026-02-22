@@ -14,8 +14,11 @@ import Foundation
 public typealias InitializerWithArgs = ([Any]) -> Any
 public typealias InitializerNoArgs = () -> Any
 
+/// Helper closures for providing arguments to call constructors with no args or argument array.
 public enum CCTComponentFactory {
+    /// Define closure `constructsWith: .withArgs { deps in ... }`
     case withArgs(InitializerWithArgs)
+    /// Define closure `constructsWith: .noArgs { ... }`
     case noArgs(InitializerNoArgs)
 
     // Helper method inside the enum to handle the execution logic
