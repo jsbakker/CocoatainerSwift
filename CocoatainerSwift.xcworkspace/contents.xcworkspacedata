@@ -2,6 +2,9 @@
 <Workspace
    version = "1.0">
    <FileRef
+      location = "container:Package.swift">
+   </FileRef>
+   <FileRef
       location = "group:CocoatainerSwift/CocoatainerSwift.xcodeproj">
    </FileRef>
    <FileRef
