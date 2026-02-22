@@ -92,4 +92,56 @@ import Testing
             Issue.record(error)
         }
     }
+
+    @Test func resolveAllDeterminism() throws {
+
+        // This was a bug in CocoatainerSwift that didn't
+        // exist in the original Objective-C Cocoatainer.
+        // Fixed the non-deterministic dict key iteration.
+        let expectedLog: [String] = [
+            "init: InitLoggerA",
+            "init: InitLoggerB",
+            "init: InitLoggerC",
+            "init: InitLoggerX",
+            "init: InitLoggerY",
+            "init: InitLoggerZ",
+        ]
+
+        let log = ArrayLog()
+
+        for _ in 0..<6 {
+            let config = CCTContainer()
+
+            do {
+                try config.register(type: Log.self, withInstance: ArrayLog())
+
+                try config.register(
+                    type: InitLoggerA.self,
+                    withInstance: InitLoggerA(log: log))
+                try config.register(
+                    type: InitLoggerB.self,
+                    withInstance: InitLoggerB(log: log))
+                try config.register(
+                    type: InitLoggerC.self,
+                    withInstance: InitLoggerC(log: log))
+                try config.register(
+                    type: InitLoggerX.self,
+                    withInstance: InitLoggerX(log: log))
+                try config.register(
+                    type: InitLoggerY.self,
+                    withInstance: InitLoggerY(log: log))
+                try config.register(
+                    type: InitLoggerZ.self,
+                    withInstance: InitLoggerZ(log: log))
+
+                try config.start(autoResolve: true)
+                let logLines = log.getLines()
+                #expect(logLines.count == 6)
+                #expect(logLines == expectedLog)
+                log.clear()
+            } catch {
+                Issue.record(error)
+            }
+        }
+    }
 }

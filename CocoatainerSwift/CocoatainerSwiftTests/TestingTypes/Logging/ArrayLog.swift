@@ -21,4 +21,8 @@ class ArrayLog: Log {
     func getLines() -> [String] {
         return lines
     }
+
+    func clear() {
+        lines.removeAll()
+    }
 }

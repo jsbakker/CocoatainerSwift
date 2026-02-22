@@ -14,4 +14,5 @@ import Foundation
 protocol Log {
     func write(_ message: String)
     func getLines() -> [String]
+    func clear()
 }

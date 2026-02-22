@@ -10,7 +10,6 @@
 //  http://opensource.org/licenses/MIT
 
 import Foundation
-import CocoatainerSwift
 
 protocol UsesLogA {
 }
