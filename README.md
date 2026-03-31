@@ -7,7 +7,7 @@ Why use an IoC container? Containers force you to invest time and thought into e
 The Factory Pattern is great for helping enforce Dependency Inversion and assumes the responsibility of object creation, but IoC takes it a step further by creating, configuring and managing scopes in a more controlled and organized manner.
 
 ### Features
-CocoatainerSwift provides an IoC container using constructor injection (as opposed to property injection) and does not require your classes to be written in a specific way for its dependencies to be injected. CocoataineSwift supports registering components either by abstract (protocol) or by concrete type (class). The container supports the following features:
+CocoatainerSwift provides an IoC container using constructor injection (as opposed to property injection) and does not require your classes to be written in a specific way for its dependencies to be injected. CocoataineSwift supports registering types either by abstract (protocol) or by concrete type (class). The container supports the following features:
 
 * Adding components by pre-allocated instance
 * Adding components by construction code block (via closure) with dependencies
@@ -37,8 +37,8 @@ If you wanted some hot cocoa, first you'd need [some sort of mug](https://bitbuc
     let pmug = LiquidVessel.self
 
     do {
-        try container.registerComponent(type: phws, withInstance: Kettle())
-        try container.registerComponent(type: ptop, withInstance: Marshmallow())
+        try container.register(type: phws, withInstance: Kettle())
+        try container.register(type: ptop, withInstance: Marshmallow())
 
         let mixDeps: [Any.Type] = [ptop]
         try container.register(
@@ -98,8 +98,93 @@ This marshmallow is so soggy that it has nearly turned into liquid.
 The above messages are printed at various times, e.g. via init(), deinit, start() and drink(). The order of the messages in this example give us insight into the lifecycle of the objects and order of operations in the container.
 
 ### Examples By the Block ###
+To create a Cocoatainer container
+```swift
+let container = CCTContainer()
 ```
-TODO:Port to Swift
+
+To register a class (concrete) with no dependencies to an initializer block
+```swift
+try container.register(
+    type: MyClass.self,
+    constructWith: .noArgs({
+        return MyClass()
+    }))
+```
+
+To do the above with 1 dependency it would look like
+```swift
+try container.register(
+    type: ClassB.self,
+    dependentOn: [ClassA.self],
+    constructWith: .withArgs({depsArgs in
+        let dep = depsArgs[0] as! ClassA
+        return ClassB(depA: dep)
+    }))
+```
+
+To register a pre-allocated instance of a class
+```swift
+try container.register(type: MyClass.self, withInstance: MyClass())
+
+// OR
+
+let instance: MyClass = MyClass()
+try container.register(type: MyClass.self, withInstance: instance)
+```
+
+To **resolve** an instance of a registered class
+```swift
+let instance = try config.resolve(ClassB.self)
+```
+
+To register a protocol (abstract) with 2 dependencies to an initializer block
+```swift
+let myDeps: [Any.Type] = [ProtocolA.self, ProtocolB.self]
+try container.register(
+    type: ProtocolC.self,
+    dependentOn: myDeps,
+    constructWith: .withArgs({depsArgs in
+        let depA = depsArgs[0] as! ProtocolA
+        let depB = depsArgs[1] as! ProtocolB
+        return ConcreteImplementsProtocolC(a: depA, b: debB)
+    }))
+```
+
+To resolve a component by protocol
+```swift
+let concreteInstance = try config.resolve(MyProtocol.self)
+```
+
+This example below is container scope nesting. Note, that an inner (descendant) container can resolve objects from the outer (ancestor) containers, but the outer containers cannot resolve objects from the inner. This is because the outer scope is wider than inner scopes, so there is no guarantee the inner scope is active.
+```swift
+let outerScope = CCTContainer()
+
+try outerScope.register(type: Log.self, withInstance: ArrayLog())
+let log = try outerScope.resolve(Log.self)
+
+autoreleasepool { // inner scope
+    let innerScope = CCTContainer()
+    innerScope.setParent(outerScope)
+
+    do {
+        try innerScope.register(
+            type: UsesLogA.self,
+            dependentOn: [Log.self],
+            constructWith: .withArgs({deps in
+                let dep: Log = deps[0] as! Log
+                return DescopeLoggerA(log: dep)
+            }))
+
+        let testObject = try innerScope.resolve(UsesLogA.self)
+        #expect(testObject is DescopeLoggerA)
+        #expect(log.getLines().count == 0)
+    } catch {
+        Issue.record(error)
+    }
+} // end of inner scope
+
+// DescopeLoggerA will scope out and print a dealloc message here, while Log is still in scope
 ```
 
 ### Getting Familiar ###
