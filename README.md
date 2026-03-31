@@ -2,7 +2,7 @@
 ![macOS](https://img.shields.io/badge/os-macOS-green.svg)
 ![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
 
-# CocoatainerSwift
+# CocoatainerSwift #
 
 Welcome to the CocoatainerSwift project. This project is aimed at providing Swift developers with a framework for [Dependency Injection](http://en.wikipedia.org/wiki/Dependency_injection) / [Inversion of Control](http://en.wikipedia.org/wiki/Inversion_of_control). This is a port of the Objective-C [Cocoatainer](https://bitbucket.org/staeryatz/cocoatainer) project.
  
@@ -10,7 +10,7 @@ Why use an IoC container? Containers force you to invest time and thought into e
 
 The Factory Pattern is great for helping enforce Dependency Inversion and assumes the responsibility of object creation, but IoC takes it a step further by creating, configuring and managing scopes in a more controlled and organized manner.
 
-### Features
+### Features ###
 CocoatainerSwift provides an IoC container using constructor injection (as opposed to property injection) and does not require your classes to be written in a specific way for its dependencies to be injected. CocoataineSwift supports registering types either by abstract (protocol) or by concrete type (class). The container supports the following features:
 
 * Adding components by pre-allocated instance
@@ -23,6 +23,10 @@ CocoatainerSwift provides an IoC container using constructor injection (as oppos
 * API documentation
 
 The CocoatainerSwift framework code is covered by several dozen unit tests around the above scenarios. The workspace also contains examples projects for using it from Swift.
+
+### Add CocoatainerSwift ###
+You can add CocoatainerSwift as package to your Swift project. Open your project in Xcode, and from the menu bar, choose File, "Add Package Dependencies...". Enter "https://github.com/jsbakker/CocoatainerSwift" in the Package URL / Search field. Select the project you want to add it to, and click Add Package. It should automatically be linked against from the default target of the project.
+
 
 ### CocoaMug Example ###
 
