@@ -1,4 +1,8 @@
-# CocoatainerSwift #
+![Swift6](https://img.shields.io/badge/swift-6-blue.svg)
+![macOS](https://img.shields.io/badge/os-macOS-green.svg)
+![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
+
+# CocoatainerSwift
 
 Welcome to the CocoatainerSwift project. This project is aimed at providing Swift developers with a framework for [Dependency Injection](http://en.wikipedia.org/wiki/Dependency_injection) / [Inversion of Control](http://en.wikipedia.org/wiki/Inversion_of_control). This is a port of the Objective-C [Cocoatainer](https://bitbucket.org/staeryatz/cocoatainer) project.
  
