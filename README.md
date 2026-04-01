@@ -30,7 +30,7 @@ You can add CocoatainerSwift as package to your Swift project. Open your project
 
 ### CocoaMug Example ###
 
-If you wanted some hot cocoa, first you'd need [some sort of mug](https://bitbucket.org/staeryatz/cocoatainerswift/src/main/CocoatainerSwiftExample/CocoatainerSwiftExample/SwiftCocoaMug/CocoaMug.swift) to put it in, get hot water from [somewhere](https://bitbucket.org/staeryatz/cocoatainerswift/src/main/CocoatainerSwiftExample/CocoatainerSwiftExample/SwiftCocoaMug/Kettle.swift), and of course some [mixture](https://bitbucket.org/staeryatz/cocoatainerswift/src/main/CocoatainerSwiftExample/CocoatainerSwiftExample/SwiftCocoaMug/CocoaPowder.swift), which may also contain [toppings](https://bitbucket.org/staeryatz/cocoatainerswift/src/main/CocoatainerSwiftExample/CocoatainerSwiftExample/SwiftCocoaMug/Marshmallow.swift). You might not know specifically how or where to get these things, but you know what it takes to make hot cocoa. Maybe it would play out like this.
+If you wanted some hot cocoa, first you'd need [some sort of mug](CocoatainerSwiftExample/CocoatainerSwiftExample/SwiftCocoaMug/CocoaMug.swift) to put it in, get hot water from [somewhere](CocoatainerSwiftExample/CocoatainerSwiftExample/SwiftCocoaMug/Kettle.swift), and of course some [mixture](CocoatainerSwiftExample/CocoatainerSwiftExample/SwiftCocoaMug/CocoaPowder.swift), which may also contain [toppings](CocoatainerSwiftExample/CocoatainerSwiftExample/SwiftCocoaMug/Marshmallow.swift). You might not know specifically how or where to get these things, but you know what it takes to make hot cocoa. Maybe it would play out like this.
 
 ```swift
     // Register abtractions (protocols) by the concrete types which implement
@@ -206,5 +206,5 @@ Before using Cocoatainer in your own project, you may want to familiarize yourse
 
 ### License ###
 
-Copyright (C)2015-2026 Jeffrey Bakker. All rights reserved.  
+Copyright (C)2015-2026 Jeffrey Bakker. All rights reserved.
 Released under the MIT license (see LICENSE.md for full text).
