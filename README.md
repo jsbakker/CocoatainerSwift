@@ -73,7 +73,7 @@ If you wanted some hot cocoa, first you'd need [some sort of mug](CocoatainerSwi
     }
 ```
 
-The above might happen inside of some configuration module, and the below could be happening in some client code.
+The above might happen inside of some configuration module (e.g. each library in your project would have a module to define how to register its own types), and the below could be happening in some higher-level client code.
 ```swift
     do {
         let mug = try container.resolve(pmug)
