@@ -10,13 +10,13 @@ on:
     branches: [ "main" ]
 
 jobs:
-  build:
+  build-package:
 
     runs-on: macos-latest
 
     steps:
     - uses: actions/checkout@v4
-    - name: Build
+    - name: Build Swift Package
       run: swift build -v
     - name: Run tests
       run: swift test -v
@@ -33,4 +33,18 @@ jobs:
           -project CocoatainerSwift/CocoatainerSwift.xcodeproj \
           -scheme CocoatainerSwift \
           -destination 'generic/platform=iOS Simulator' \
+          -clonedSourcePackagesDirPath .build
+
+  build-macos:
+
+    runs-on: macos-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Build for macOS
+      run: |
+        xcodebuild build \
+          -project CocoatainerSwift/CocoatainerSwift.xcodeproj \
+          -scheme CocoatainerSwift \
+          -destination 'generic/platform=macOS' \
           -clonedSourcePackagesDirPath .build
