@@ -1,3 +1,5 @@
+MIT License
+
 CocoatainerSwift - an Inversion of Control container for Swift, ported from the
 Objective-C framework, Cocoatainer.
 Copyright (c) 2015-2026 Jeffrey Bakker. 
