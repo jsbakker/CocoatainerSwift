@@ -47,4 +47,7 @@ jobs:
           -project CocoatainerSwift/CocoatainerSwift.xcodeproj \
           -scheme CocoatainerSwift \
           -destination 'generic/platform=macOS' \
-          -clonedSourcePackagesDirPath .build
+          -clonedSourcePackagesDirPath .build \
+          CODE_SIGNING_ALLOWED=NO \
+          CODE_SIGN_IDENTITY="" \
+          CODE_SIGNING_REQUIRED=NO
