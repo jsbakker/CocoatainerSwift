@@ -1,5 +1,6 @@
 ![Swift6](https://img.shields.io/badge/swift-6-blue.svg)
 ![macOS](https://img.shields.io/badge/os-macOS-green.svg)
+![macOS](https://img.shields.io/badge/os-iOS-green.svg)
 ![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
 [![Swift Build and Test](https://github.com/jsbakker/CocoatainerSwift/actions/workflows/swift.yml/badge.svg)](https://github.com/jsbakker/CocoatainerSwift/actions/workflows/swift.yml)
 
