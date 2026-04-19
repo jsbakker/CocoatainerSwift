@@ -13,14 +13,10 @@ import Foundation
 import Testing
 @testable import CocoatainerSwift
 
-@Suite("CocoatainerScopeTests") class CocoatainerScopeTests {
+@Suite("CocoatainerScopeTests") struct CocoatainerScopeTests {
 
     init() async throws {
         // Setup
-    }
-
-    deinit {
-        // Teardown
     }
 
     @Test func instanceResolvesAfterOriginalScopeHasEnded() throws {

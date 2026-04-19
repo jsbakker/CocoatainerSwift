@@ -11,14 +11,10 @@
 import Testing
 @testable import CocoatainerSwift
 
-@Suite("CocoatainerCoreTests") class CocoatainerCoreTests {
+@Suite("CocoatainerCoreTests") struct CocoatainerCoreTests {
 
     init() async throws {
         // Setup
-    }
-
-    deinit {
-        // Teardown
     }
 
     @Test func resolveInjectedInstanceByInterface() throws {
