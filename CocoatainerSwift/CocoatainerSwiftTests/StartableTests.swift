@@ -11,14 +11,10 @@
 import Testing
 @testable import CocoatainerSwift
 
-@Suite("StartableTests") class StartableTests {
+@Suite("StartableTests") struct StartableTests {
 
     init() async throws {
         // Setup
-    }
-
-    deinit {
-        // Teardown
     }
 
     @Test func notResolvedNotStarted() throws {

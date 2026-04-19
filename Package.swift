@@ -1,12 +1,12 @@
-// swift-tools-version: 5.9
+// swift-tools-version: 6.1
 
 import PackageDescription
 
 let package = Package(
     name: "CocoatainerSwift",
     platforms: [
-        .macOS(.v10_15),
-        .iOS(.v13)
+        .macOS(.v15),
+        .iOS(.v18)
     ],
     products: [
         .library(

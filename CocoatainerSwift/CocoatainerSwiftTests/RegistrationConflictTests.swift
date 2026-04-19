@@ -11,14 +11,10 @@
 import Testing
 @testable import CocoatainerSwift
 
-@Suite("RegistrationConflictTests") class RegistrationConflictTests {
+@Suite("RegistrationConflictTests") struct RegistrationConflictTests {
 
     init() async throws {
         // Setup
-    }
-
-    deinit {
-        // Teardown
     }
 
     @Test func resolveUnregisteredClassThrows() async throws {

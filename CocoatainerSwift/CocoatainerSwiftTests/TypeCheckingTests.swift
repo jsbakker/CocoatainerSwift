@@ -14,14 +14,10 @@ import Testing
 // Most of the TypeChecking tests in the original Objective-C Cocoatainer are
 // invalid on Swift, as the Swift design prevents the otherwise error-throwing
 // scenarios at compile-time.
-@Suite("TypeCheckingTests") class TypeCheckingTests {
+@Suite("TypeCheckingTests") struct TypeCheckingTests {
 
     init() async throws {
         // Setup
-    }
-
-    deinit {
-        // Teardown
     }
 
     @Test func resolveFailsWhenDependencyIsntRegistered() throws {
